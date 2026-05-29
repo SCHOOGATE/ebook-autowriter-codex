@@ -1,0 +1,23 @@
+style: E（ハイブリッド型）
+color_palette:
+  main: "#FFF9C4"
+  accent: "#1565C0"
+  highlight: "#FF5722"
+prompt: |
+  Professional Kindle book cover, portrait orientation 2:3 ratio (1600x2560px).
+  Title: "2026年最新版 AI副業のすべて" in large bold Japanese text, centered upper area.
+  Subtitle: "怪しい案件を避けて、生成AIを収入に変える実践ガイド" in smaller Japanese text below title.
+  Author: "DaiGo" in readable Japanese/Latin text near the bottom area, smaller than the subtitle.
+  Style: Hybrid side-hustle how-to cover combining bold text impact with modern AI-tech visual elements. Clean Japanese business ebook design. Include a subtle futuristic AI interface motif, laptop, smartphone, and side income growth imagery, but keep the composition simple and readable.
+  Color palette: #FFF9C4 / #1565C0 / #FF5722
+  Design:
+  - Z-pattern eye flow
+  - Title text clearly readable
+  - Author name clearly readable but secondary to title and subtitle
+  - Professional modern Kindle cover
+  - High contrast between text and background
+  - Beginner-friendly and trustworthy mood
+  - Avoid scammy get-rich-quick feeling
+  - Include the author name "DaiGo" on the cover
+  - No watermarks, no logos
+  High resolution, 4K quality.
