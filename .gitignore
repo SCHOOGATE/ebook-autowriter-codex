@@ -4,12 +4,22 @@ output/*/
 # Python
 __pycache__/
 *.pyc
+*.pyo
 .venv/
+venv/
+.env
 
 # OS
 .DS_Store
 Thumbs.db
+Desktop.ini
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+
+# Temp
+*.tmp
+*.bak
