@@ -266,3 +266,5 @@ python scripts/clean_invisible.py output/{slug}/
 ## ライセンス
 
 本リポジトリは AI出版ラボ のコミュニティメンバー向けに提供されています。
+個人の電子書籍制作目的での利用は自由ですが、商用再配布・競合サービスへの転用は禁止です。
+詳細は [LICENSE](LICENSE) を参照してください。
