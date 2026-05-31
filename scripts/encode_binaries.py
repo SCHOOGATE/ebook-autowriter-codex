@@ -7,18 +7,10 @@ Base64エンコードしたテキストファイルとしてPRに含める。
 Usage:
     python scripts/encode_binaries.py output/{slug}
 
-エンコード後、元のバイナリファイルは自動削除される（Codex PR制限回避のため）。
+Phase 6/7のvalidate_images.py内から自動呼出しされる。
+複数回呼ばれてもmanifest.jsonは追記モードで安全。
+エンコード後、元のバイナリファイルは自動削除される。
 ユーザーはPRマージ後に decode_binaries.py で復元する。
-
-出力:
-    output/{slug}/binaries/
-        cover.jpg.b64
-        aplus_1.png.b64
-        aplus_2.png.b64
-        aplus_3.png.b64
-        aplus_4.png.b64
-        manuscript.docx.b64  (存在する場合)
-        manifest.json        (復元用マッピング)
 """
 
 import base64
@@ -53,7 +45,6 @@ def find_binaries(output_dir: str) -> list:
     """output_dir内のバイナリファイルを再帰的に検索"""
     binaries = []
     for root, dirs, files in os.walk(output_dir):
-        # binaries/ ディレクトリ自体はスキップ
         if 'binaries' in root:
             continue
         for fname in files:
@@ -61,6 +52,74 @@ def find_binaries(output_dir: str) -> list:
             if ext in BINARY_EXTENSIONS:
                 binaries.append(os.path.join(root, fname))
     return binaries
+
+
+def load_existing_manifest(manifest_path: str) -> list:
+    """既存のmanifest.jsonがあれば読み込む（追記モード対応）"""
+    if os.path.isfile(manifest_path):
+        with open(manifest_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return []
+
+
+def encode_and_cleanup(output_dir: str) -> int:
+    """メイン処理: エンコード→削除→manifest更新。戻り値はエンコードしたファイル数"""
+    binaries_dir = os.path.join(output_dir, 'binaries')
+    os.makedirs(binaries_dir, exist_ok=True)
+
+    binaries = find_binaries(output_dir)
+    if not binaries:
+        print("  encode: バイナリファイルなし（スキップ）")
+        return 0
+
+    # 既存manifestを読み込み（Phase 6→7の追記対応）
+    manifest_path = os.path.join(binaries_dir, 'manifest.json')
+    manifest = load_existing_manifest(manifest_path)
+    existing_paths = {e['relative_path'] for e in manifest}
+
+    new_count = 0
+    for src_path in binaries:
+        rel_path = os.path.relpath(src_path, output_dir)
+
+        # 既にエンコード済みならスキップ
+        if rel_path in existing_paths:
+            continue
+
+        flat_name = rel_path.replace(os.sep, '_') + '.b64'
+        dst_path = os.path.join(binaries_dir, flat_name)
+
+        info = encode_file(src_path, dst_path)
+        info['relative_path'] = rel_path
+        manifest.append(info)
+        new_count += 1
+        print(f"  ENCODED: {rel_path} -> binaries/{flat_name} ({info['original_size']:,} bytes)")
+
+    # manifest保存（追記済み）
+    with open(manifest_path, 'w', encoding='utf-8') as f:
+        json.dump(manifest, f, ensure_ascii=False, indent=2)
+
+    # 元のバイナリファイルを削除
+    deleted = 0
+    for src_path in binaries:
+        try:
+            os.remove(src_path)
+            deleted += 1
+            print(f"  DELETED: {os.path.relpath(src_path, output_dir)}")
+        except OSError as e:
+            print(f"  WARNING: 削除失敗 {src_path}: {e}")
+
+    # 空ディレクトリ削除
+    for root, dirs, files in os.walk(output_dir, topdown=False):
+        if 'binaries' in root:
+            continue
+        if not files and not dirs and root != output_dir:
+            try:
+                os.rmdir(root)
+            except OSError:
+                pass
+
+    print(f"  encode完了: {new_count}ファイルエンコード、{deleted}ファイル削除")
+    return new_count
 
 
 def main():
@@ -73,55 +132,9 @@ def main():
         print(f"ERROR: ディレクトリが見つかりません: {output_dir}")
         sys.exit(1)
 
-    binaries_dir = os.path.join(output_dir, 'binaries')
-    os.makedirs(binaries_dir, exist_ok=True)
-
-    binaries = find_binaries(output_dir)
-    if not binaries:
-        print("バイナリファイルが見つかりませんでした。")
-        sys.exit(0)
-
-    manifest = []
-    for src_path in binaries:
-        # 元のパスからoutput_dir相対パスを取得
-        rel_path = os.path.relpath(src_path, output_dir)
-        # フラットに保存（サブディレクトリ構造を _ で置換）
-        flat_name = rel_path.replace(os.sep, '_') + '.b64'
-        dst_path = os.path.join(binaries_dir, flat_name)
-
-        info = encode_file(src_path, dst_path)
-        info['relative_path'] = rel_path
-        manifest.append(info)
-        print(f"  ENCODED: {rel_path} -> binaries/{flat_name} ({info['original_size']:,} bytes)")
-
-    # マニフェスト保存（デコード時に使用）
-    manifest_path = os.path.join(binaries_dir, 'manifest.json')
-    with open(manifest_path, 'w', encoding='utf-8') as f:
-        json.dump(manifest, f, ensure_ascii=False, indent=2)
-
-    # 元のバイナリファイルを削除（Codex PRがバイナリを検出しないようにする）
-    deleted = 0
-    for src_path in binaries:
-        try:
-            os.remove(src_path)
-            deleted += 1
-            print(f"  DELETED: {os.path.relpath(src_path, output_dir)}")
-        except OSError as e:
-            print(f"  WARNING: 削除失敗 {src_path}: {e}")
-
-    # 空になったディレクトリも削除
-    for root, dirs, files in os.walk(output_dir, topdown=False):
-        if 'binaries' in root:
-            continue
-        if not files and not dirs and root != output_dir:
-            try:
-                os.rmdir(root)
-            except OSError:
-                pass
-
-    print(f"\n完了: {len(manifest)}ファイルをエンコード、{deleted}ファイルの元バイナリを削除しました。")
-    print(f"マニフェスト: {manifest_path}")
-    print(f"\n※ PRマージ後に python scripts/decode_binaries.py output/{{slug}} で復元してください。")
+    count = encode_and_cleanup(output_dir)
+    if count > 0:
+        print(f"\n※ PRマージ後に python scripts/decode_binaries.py output/{{slug}} で復元してください。")
 
 
 if __name__ == '__main__':

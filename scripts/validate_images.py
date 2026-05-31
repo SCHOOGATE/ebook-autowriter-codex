@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""画像ファイルの品質検証スクリプト（stdlib only）
-- ファイル存在チェック
-- 最小ファイルサイズチェック（ダミー画像排除）
+"""画像ファイルの品質検証 + Base64エンコード + 元ファイル削除
+
+validate → PASS → encode_binaries自動実行 → 元バイナリ削除
+これによりPR作成時にバイナリが存在しない状態を保証する。
 """
 import sys
 import os
+import importlib.util
 
 
 # 最小ファイルサイズ（バイト）
@@ -16,7 +18,6 @@ def validate_cover(slug_dir):
     """表紙画像の検証"""
     path = os.path.join(slug_dir, "images", "cover.jpg")
     if not os.path.exists(path):
-        # .pngもチェック
         path = os.path.join(slug_dir, "images", "cover.png")
         if not os.path.exists(path):
             return "cover.jpg/png が存在しません"
@@ -42,6 +43,21 @@ def validate_aplus(slug_dir):
     return issues
 
 
+def run_encode(slug_dir):
+    """encode_binaries.pyのencode_and_cleanup関数を呼び出す"""
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    encode_path = os.path.join(script_dir, "encode_binaries.py")
+
+    if not os.path.exists(encode_path):
+        print("  WARNING: encode_binaries.py が見つかりません。エンコードをスキップします。")
+        return
+
+    spec = importlib.util.spec_from_file_location("encode_binaries", encode_path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    mod.encode_and_cleanup(slug_dir)
+
+
 def validate(slug_dir, mode="all"):
     errors = []
 
@@ -60,7 +76,7 @@ def validate(slug_dir, mode="all"):
             print(f"  - {e}")
         return 1
 
-    # サイズ情報を表示
+    # サイズ情報を表示（エンコード前に記録）
     cover_path = os.path.join(slug_dir, "images", "cover.jpg")
     if not os.path.exists(cover_path):
         cover_path = os.path.join(slug_dir, "images", "cover.png")
@@ -72,6 +88,11 @@ def validate(slug_dir, mode="all"):
             print(f"  aplus_{i}: {os.path.getsize(ap):,}B")
 
     print(f"PASS: 画像検証OK ({mode})")
+
+    # ✅ PASS後に自動Base64エンコード＋元ファイル削除
+    print(f"\n--- Base64エンコード開始 ---")
+    run_encode(slug_dir)
+
     return 0
 
 
