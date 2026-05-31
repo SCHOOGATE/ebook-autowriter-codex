@@ -1,4 +1,4 @@
-# eBook AutoWriter for Codex v3.1
+# eBook AutoWriter for Codex v3.2
 
 電子書籍（25,000字・5章構成）を対話型でリサーチ → 執筆 → メタデータ → 表紙 → A+画像 → 申請データまで一括生成。
 **要所でユーザー確認を挟み、承認後に自動進行する。**
@@ -34,6 +34,29 @@
 7. 原稿はHTML形式で出力する（Markdown原稿とは別にHTMLも生成）
 8. 不可視文字を絶対に混入させない（ZWNJ U+200C、Tags U+E0000〜U+E01FF 等）
 9. Markdownでは1文（句点「。」まで）= 1段落とする（Kindle読みやすさのため）
+10. コミットはテキスト系と画像系を分ける（差分サイズ超過防止）
+11. 表紙画像はJPG形式で出力する（KDP申請可能＋ファイルサイズ削減）
+```
+
+## リトライ時の絶対ルール
+
+```
+■ 原稿（manuscript.md / manuscript.html）のリトライ:
+  - 不合格の章を特定し、その章を「全文削除してから新しく書き直す」
+  - 既存テキストの末尾に追記（append）は絶対禁止
+  - 書き直す際は、前の版と異なる具体例・表現・構成を使う
+  - リトライ後も n-gram重複率が15%以上なら、原稿全体を1から再生成する
+
+■ メタデータ（listing.txt / kindle_application.txt）のリトライ:
+  - listing.txt の紹介文は最低3,000字（不足時は内容を深掘りして加筆）
+  - kindle_application.txt の書籍説明文は最低2,500字（PASONA各節を充実させる）
+  - 文字数不足で再生成する場合も、同じ文の繰り返しで水増ししない
+
+■ コミット分離ルール:
+  - Phase 3〜5 完了時: テキストファイルのみコミット（manuscript/listing/kindle_app等）
+  - Phase 6 完了時: cover.jpg + cover_prompt.txt のみコミット
+  - Phase 7 完了時: aplus_1〜4.png のみコミット
+  - Phase 8 完了時: completion_report.json をコミット
 ```
 
 ## 全体フロー（対話型・7チェックポイント）
@@ -576,7 +599,7 @@ python scripts/validate_manuscript.py output/{slug}
 - 禁止パターン（テーブル・コードブロック・ASCII図）なし
 - です/ます調 80%以上
 
-**NGの場合:** 不合格の章を特定し、その章のみ再執筆して再検証。
+**NGの場合:** 「リトライ時の絶対ルール」に従い、不合格の章を全文削除してから新しく書き直す。既存テキストへのappend禁止。
 
 ---
 
@@ -751,6 +774,11 @@ High resolution, 4K quality.
 
 生成した画像を `output/{slug}/images/cover.jpg` に保存。
 
+**画像形式ルール:**
+- 表紙は必ず **JPG形式** で保存（PNGで生成された場合はJPGに変換）
+- KDP申請にそのまま使える形式にする
+- 画像生成後、テキストファイルとは **別のコミット** で保存する
+
 ### Phase 6 完了時の検証（必須）
 
 ```bash
@@ -923,3 +951,5 @@ python scripts/validate_all.py output/{slug}
 - **pip install は実行しない（Codexサンドボックスでは不可）**
 - **pandoc は使用しない（Codexサンドボックスでは不可）**
 - **検証スクリプトはPython標準ライブラリのみで動作する**
+- **テキストと画像は別コミットにする（差分サイズ超過防止）**
+- **表紙画像はJPG形式で出力する（PNG生成時はJPGに変換）**
