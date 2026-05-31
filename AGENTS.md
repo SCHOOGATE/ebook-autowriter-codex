@@ -953,3 +953,45 @@ python scripts/validate_all.py output/{slug}
 - **検証スクリプトはPython標準ライブラリのみで動作する**
 - **テキストと画像は別コミットにする（差分サイズ超過防止）**
 - **表紙画像はJPG形式で出力する（PNG生成時はJPGに変換）**
+
+---
+
+# PR作成ルール（厳守）
+
+## バイナリファイルの除外
+
+GitHub PRの差分ビューはバイナリファイルをサポートしない。
+PR作成時は**テキストファイルのみ**をコミットし、バイナリは除外する。
+
+### コミット対象（テキストのみ）
+- `*.md` — 原稿Markdown、リサーチ結果、メタ情報
+- `*.txt` — listing.txt、cover_prompt.txt、kindle_application.txt
+- `*.py` — スクリプト（新規・修正時のみ）
+- `*.json` — completion_report.json 等
+
+### コミット除外（バイナリ）
+- `*.docx` — Word原稿
+- `*.png` `*.jpg` `*.jpeg` — 表紙画像、A+コンテンツ画像
+- `*.pdf` — PDF出力物
+
+### コミット手順
+
+```bash
+# 1. テキストファイルのみステージング（バイナリは自動除外される）
+git add output/{slug}/*.md output/{slug}/*.txt
+git add output/{slug}/completion_report.json
+
+# 2. バイナリが含まれていないことを確認
+git diff --cached --name-only | grep -E '\.(docx|png|jpg|jpeg|pdf)$' && echo "ERROR: バイナリが含まれています" || echo "OK: テキストのみ"
+
+# 3. コミット
+git commit -m "Add {slug} text outputs"
+```
+
+### バイナリの保存場所
+バイナリファイル（DOCX・画像）は `output/{slug}/` に生成されるが、
+Gitには含めない。ユーザーがPRマージ後にローカルで取得する。
+
+## 重要
+- `git add .` や `git add -A` は**絶対に使わない**（バイナリが混入する）
+- `.gitignore` でバイナリ拡張子を除外済みだが、明示的にテキストのみ追加する習慣を徹底する

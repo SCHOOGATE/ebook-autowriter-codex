@@ -1,5 +1,16 @@
 # Output files (generated per book)
-output/*/
+output/
+
+# Binary files (PR差分でサポートされないため除外)
+*.docx
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.pdf
+*.gif
+*.bmp
+*.tiff
 
 # Python
 __pycache__/
@@ -23,4 +34,3 @@ Desktop.ini
 # Temp
 *.tmp
 *.bak
-output/ 
