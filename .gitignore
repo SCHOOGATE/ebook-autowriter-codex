@@ -1,7 +1,5 @@
-# Output files (generated per book)
-output/
-
-# Binary files (PR差分でサポートされないため除外)
+# Binary files (Codex PRで直接サポートされないため除外)
+# Base64エンコード版(.b64)はコミット対象
 *.docx
 *.png
 *.jpg

@@ -28,13 +28,13 @@
 1. 「ファイルが存在する」≠「完了」。内容の品質チェックが必須
 2. 各Phaseの末尾で python scripts/validate_*.py を必ず実行する
 3. 検証NGなら該当Phaseを再実行する（最大2回リトライ）
-4. DOCX変換はCodexの責務ではない（pandoc/python-docx不要）
+4. DOCX変換はpython-docxで行う（setup.shで事前インストール済み。pandocは不可）
 5. 画像はファイルサイズ50KB以上を必須とする（ダミー禁止）
 6. 原稿の同一文反復は禁止（n-gram重複率15%未満を厳守）
 7. 原稿はHTML形式で出力する（Markdown原稿とは別にHTMLも生成）
 8. 不可視文字を絶対に混入させない（ZWNJ U+200C、Tags U+E0000〜U+E01FF 等）
 9. Markdownでは1文（句点「。」まで）= 1段落とする（Kindle読みやすさのため）
-10. コミットはテキスト系と画像系を分ける（差分サイズ超過防止）
+10. PR作成前に必ず python scripts/encode_binaries.py を実行する（バイナリPR制限回避）
 11. 表紙画像はJPG形式で出力する（KDP申請可能＋ファイルサイズ削減）
 ```
 
@@ -911,6 +911,41 @@ python scripts/validate_all.py output/{slug}
 
 ---
 
+## Phase 9: DOCX変換（setup.shでpython-docx インストール済み）
+
+manuscript.md をもとに python-docx で DOCX ファイルを生成する。
+
+```python
+# scripts/md_to_docx.py で変換（python-docx使用）
+python scripts/md_to_docx.py output/{slug}/manuscript.md output/{slug}/manuscript.docx
+```
+
+変換後、後処理スクリプトを実行:
+```bash
+python scripts/docx_postprocess.py output/{slug}/manuscript.docx
+```
+
+---
+
+## Phase 10: バイナリファイルのBase64エンコード（PR対応・必須）
+
+Codex PRはバイナリファイルを直接含められないため、
+全バイナリ（画像・DOCX）をBase64テキストに変換してPRに含める。
+
+```bash
+python scripts/encode_binaries.py output/{slug}
+```
+
+このスクリプトは:
+1. output/{slug}/ 内のバイナリファイル（.png .jpg .jpeg .docx）を検索
+2. 各ファイルをBase64エンコードして `output/{slug}/binaries/` に `.b64` テキストとして保存
+3. `manifest.json`（復元用マッピング）を生成
+
+**エンコード後、binaries/ ディレクトリもコミットに含める。**
+`.b64` ファイルはテキストなのでPRに含めてもエラーにならない。
+
+---
+
 ## ★確認7: 最終出力の確認・完了報告
 
 統合検証の結果をユーザーに報告する。
@@ -925,18 +960,21 @@ python scripts/validate_all.py output/{slug}
 成果物一覧:
 1. manuscript.md — Markdown原稿（{N}字）
 2. manuscript.html — HTML原稿
-3. research.md — リサーチ結果
-4. book_meta.md — 確定メタ情報
-5. listing.txt — 出版メタデータ
-6. cover_prompt.txt — 表紙プロンプト
-7. kindle_application.txt — Kindle申請データ
-8. images/cover.jpg — 表紙画像
-9. images/aplus_1〜4.png — A+コンテンツ画像
+3. manuscript.docx — Word原稿（python-docx変換済み）
+4. research.md — リサーチ結果
+5. book_meta.md — 確定メタ情報
+6. listing.txt — 出版メタデータ
+7. cover_prompt.txt — 表紙プロンプト
+8. kindle_application.txt — Kindle申請データ
+9. images/cover.jpg — 表紙画像
+10. images/aplus_1〜4.png — A+コンテンツ画像
+11. binaries/ — Base64エンコード済みバイナリ（PR用）
 
 統合検証: {PASS/FAIL}
 {各Phase の結果}
 
-※ manuscript.docx はローカル環境で pandoc 変換してください。
+※ PRマージ後、ローカルで以下を実行して画像・DOCXを復元してください:
+  python scripts/decode_binaries.py output/{slug}
 ```
 
 ---
@@ -948,50 +986,56 @@ python scripts/validate_all.py output/{slug}
 - 著者情報を原稿本文に入れない
 - 表紙に著者名を入れない
 - ASCII罫線図を使わない
-- **pip install は実行しない（Codexサンドボックスでは不可）**
-- **pandoc は使用しない（Codexサンドボックスでは不可）**
-- **検証スクリプトはPython標準ライブラリのみで動作する**
-- **テキストと画像は別コミットにする（差分サイズ超過防止）**
+- **pip install はエージェントフェーズで実行しない（setup.shで事前インストール済み）**
+- **pandoc は使用しない（python-docxで直接生成する）**
+- **検証スクリプトはPython標準ライブラリ + setup.shでインストール済みパッケージのみで動作する**
 - **表紙画像はJPG形式で出力する（PNG生成時はJPGに変換）**
+- **PR作成前に必ず `python scripts/encode_binaries.py` を実行する（バイナリPR制限回避）**
 
 ---
 
 # PR作成ルール（厳守）
 
-## バイナリファイルの除外
+## Base64方式によるバイナリファイルのPR対応
 
-GitHub PRの差分ビューはバイナリファイルをサポートしない。
-PR作成時は**テキストファイルのみ**をコミットし、バイナリは除外する。
+Codex WebのPRはバイナリファイルを直接含められない。
+そのため Phase 10 で全バイナリをBase64テキスト化してからPRに含める。
 
-### コミット対象（テキストのみ）
+### コミット対象
 - `*.md` — 原稿Markdown、リサーチ結果、メタ情報
 - `*.txt` — listing.txt、cover_prompt.txt、kindle_application.txt
+- `*.html` — HTML原稿
+- `*.json` — completion_report.json、manifest.json
+- `*.b64` — Base64エンコード済みバイナリ（binaries/内）
 - `*.py` — スクリプト（新規・修正時のみ）
-- `*.json` — completion_report.json 等
 
-### コミット除外（バイナリ）
-- `*.docx` — Word原稿
-- `*.png` `*.jpg` `*.jpeg` — 表紙画像、A+コンテンツ画像
-- `*.pdf` — PDF出力物
+### コミット除外（.gitignoreで自動除外）
+- `*.docx` `*.png` `*.jpg` `*.jpeg` `*.pdf` — 生バイナリファイル
+- これらは `.b64` 形式でPRに含まれるため、生ファイルは不要
 
 ### コミット手順
 
 ```bash
-# 1. テキストファイルのみステージング（バイナリは自動除外される）
-git add output/{slug}/*.md output/{slug}/*.txt
-git add output/{slug}/completion_report.json
+# 1. Phase 10 のBase64エンコードが完了していることを確認
+ls output/{slug}/binaries/manifest.json
 
-# 2. バイナリが含まれていないことを確認
-git diff --cached --name-only | grep -E '\.(docx|png|jpg|jpeg|pdf)$' && echo "ERROR: バイナリが含まれています" || echo "OK: テキストのみ"
+# 2. テキスト + Base64ファイルをステージング
+git add output/{slug}/*.md output/{slug}/*.txt output/{slug}/*.html
+git add output/{slug}/*.json
+git add output/{slug}/binaries/
 
-# 3. コミット
-git commit -m "Add {slug} text outputs"
+# 3. バイナリが含まれていないことを確認
+git diff --cached --name-only | grep -E '\.(docx|png|jpg|jpeg|pdf)$' && echo "ERROR: バイナリが含まれています" || echo "OK"
+
+# 4. コミット
+git commit -m "Add {slug} complete outputs (text + base64 binaries)"
 ```
 
-### バイナリの保存場所
-バイナリファイル（DOCX・画像）は `output/{slug}/` に生成されるが、
-Gitには含めない。ユーザーがPRマージ後にローカルで取得する。
+### ユーザーへの復元案内
+PRの説明欄に以下を必ず記載する:
 
-## 重要
-- `git add .` や `git add -A` は**絶対に使わない**（バイナリが混入する）
-- `.gitignore` でバイナリ拡張子を除外済みだが、明示的にテキストのみ追加する習慣を徹底する
+```
+## 画像・DOCXの復元方法
+PRマージ後、以下を実行してください:
+python scripts/decode_binaries.py output/{slug}
+```
