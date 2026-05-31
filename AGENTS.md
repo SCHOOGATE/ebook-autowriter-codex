@@ -34,8 +34,9 @@
 7. 原稿はHTML形式で出力する（Markdown原稿とは別にHTMLも生成）
 8. 不可視文字を絶対に混入させない（ZWNJ U+200C、Tags U+E0000〜U+E01FF 等）
 9. Markdownでは1文（句点「。」まで）= 1段落とする（Kindle読みやすさのため）
-10. PR作成前に必ず python scripts/encode_binaries.py を実行する（バイナリPR制限回避）
+10. バイナリファイル(.png/.jpg/.docx)は絶対に直接コミットしない（Phase 10でBase64化してからコミット）
 11. 表紙画像はJPG形式で出力する（KDP申請可能＋ファイルサイズ削減）
+12. Phase 10（encode_binaries.py）完了前にPRを作成しない
 ```
 
 ## リトライ時の絶対ルール
@@ -52,11 +53,13 @@
   - kindle_application.txt の書籍説明文は最低2,500字（PASONA各節を充実させる）
   - 文字数不足で再生成する場合も、同じ文の繰り返しで水増ししない
 
-■ コミット分離ルール:
+■ コミットルール（バイナリは絶対にコミットしない）:
   - Phase 3〜5 完了時: テキストファイルのみコミット（manuscript/listing/kindle_app等）
-  - Phase 6 完了時: cover.jpg + cover_prompt.txt のみコミット
-  - Phase 7 完了時: aplus_1〜4.png のみコミット
+  - Phase 6 完了時: cover_prompt.txt のみコミット（cover.jpgはコミットしない）
+  - Phase 7 完了時: コミットしない（画像はPhase 10でBase64化してからコミット）
   - Phase 8 完了時: completion_report.json をコミット
+  - Phase 10 完了時: binaries/*.b64 + manifest.json をコミット（元バイナリは自動削除済み）
+  - *.png *.jpg *.jpeg *.docx は直接コミット禁止（必ずBase64経由）
 ```
 
 ## 全体フロー（対話型・7チェックポイント）
@@ -777,7 +780,7 @@ High resolution, 4K quality.
 **画像形式ルール:**
 - 表紙は必ず **JPG形式** で保存（PNGで生成された場合はJPGに変換）
 - KDP申請にそのまま使える形式にする
-- 画像生成後、テキストファイルとは **別のコミット** で保存する
+- 画像ファイルは直接コミットしない（Phase 10でBase64エンコード後にコミットする）
 
 ### Phase 6 完了時の検証（必須）
 
@@ -992,7 +995,9 @@ python scripts/encode_binaries.py output/{slug}
 - **pandoc は使用しない（python-docxで直接生成する）**
 - **検証スクリプトはPython標準ライブラリ + setup.shでインストール済みパッケージのみで動作する**
 - **表紙画像はJPG形式で出力する（PNG生成時はJPGに変換）**
-- **PR作成前に必ず `python scripts/encode_binaries.py` を実行する（バイナリPR制限回避）**
+- **バイナリファイル（.png .jpg .jpeg .docx）を直接 git add / git commit してはならない**
+- **画像・DOCXは Phase 10 の encode_binaries.py 実行後に .b64 としてのみコミットする**
+- **Phase 10 完了前にPRを作成してはならない（バイナリ残存でエラーになる）**
 
 ---
 
