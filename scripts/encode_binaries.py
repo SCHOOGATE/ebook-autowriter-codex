@@ -7,6 +7,9 @@ Base64エンコードしたテキストファイルとしてPRに含める。
 Usage:
     python scripts/encode_binaries.py output/{slug}
 
+エンコード後、元のバイナリファイルは自動削除される（Codex PR制限回避のため）。
+ユーザーはPRマージ後に decode_binaries.py で復元する。
+
 出力:
     output/{slug}/binaries/
         cover.jpg.b64
@@ -15,6 +18,7 @@ Usage:
         aplus_3.png.b64
         aplus_4.png.b64
         manuscript.docx.b64  (存在する場合)
+        manifest.json        (復元用マッピング)
 """
 
 import base64
@@ -95,8 +99,29 @@ def main():
     with open(manifest_path, 'w', encoding='utf-8') as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
 
-    print(f"\n完了: {len(manifest)}ファイルをエンコードしました。")
+    # 元のバイナリファイルを削除（Codex PRがバイナリを検出しないようにする）
+    deleted = 0
+    for src_path in binaries:
+        try:
+            os.remove(src_path)
+            deleted += 1
+            print(f"  DELETED: {os.path.relpath(src_path, output_dir)}")
+        except OSError as e:
+            print(f"  WARNING: 削除失敗 {src_path}: {e}")
+
+    # 空になったディレクトリも削除
+    for root, dirs, files in os.walk(output_dir, topdown=False):
+        if 'binaries' in root:
+            continue
+        if not files and not dirs and root != output_dir:
+            try:
+                os.rmdir(root)
+            except OSError:
+                pass
+
+    print(f"\n完了: {len(manifest)}ファイルをエンコード、{deleted}ファイルの元バイナリを削除しました。")
     print(f"マニフェスト: {manifest_path}")
+    print(f"\n※ PRマージ後に python scripts/decode_binaries.py output/{{slug}} で復元してください。")
 
 
 if __name__ == '__main__':
