@@ -954,6 +954,7 @@ Phase 6/7 で `validate_images.py` を実行すれば、追加の手順は不要
 - **バイナリファイル（.png .jpg .jpeg .docx）を直接 git add / git commit してはならない**
 - **validate_images.py が自動でBase64化＋元ファイル削除する。手動エンコードは不要**
 - **PR作成時にワークスペースにバイナリが残っていないことを確認する**
+- **画像内の日本語テキストはgpt-image-2のプロンプトに含めて描画する（Pillow/PILでのテキスト描画は禁止。Codex環境に日本語フォントがない）**
 
 ---
 
