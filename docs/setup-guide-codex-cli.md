@@ -352,9 +352,14 @@ codex mcp add chrome-devtools -- npx -y @anthropic-ai/chrome-devtools-mcp@latest
 
 ---
 
-## Step 9: デスクトップに「書籍ダウンロード」アイコンを作成
+## Step 9: デスクトップにアイコンを作成（6/2更新）
 
-書籍が完成した後、ワンクリックでデータを取得するためのアイコンを作ります。
+書籍が完成した後、ワンクリックでデータを取得するためのアイコンを2つ作ります。
+
+| アイコン名 | 用途 | いつ使う？ |
+|-----------|------|----------|
+| **BookRestore** | 画像を復元してフォルダを開く | **Codex CLI で書籍制作した後（通常はこちらを使います）** |
+| BookDownload | GitHubからデータ取得＋画像復元 | Codex Cloud で制作した場合のみ |
 
 ### 手順
 
@@ -367,11 +372,24 @@ cd %USERPROFILE%\repos\ebook-autowriter-codex
 2. 続けて以下を入力して Enter:
 
 ```
-powershell -ExecutionPolicy Bypass -File scripts\create_shortcut.ps1
+powershell -ExecutionPolicy Bypass -File scripts\create_shortcuts.ps1
 ```
 
-3. デスクトップに **「BookDownload」** というアイコンが作成されます
-   > [スクリーンショット撮影ポイント] デスクトップに作成された BookDownload アイコンを撮影
+3. デスクトップに **「BookRestore」** と **「BookDownload」** の2つのアイコンが作成されます
+   > [スクリーンショット撮影ポイント] デスクトップに作成された2つのアイコンを撮影
+
+### 使い方
+
+**Codex CLI で書籍を作った場合（通常の使い方）:**
+1. Codex CLI での制作が完了する
+2. デスクトップの **「BookRestore」をダブルクリック**
+3. 画像が自動で復元され、フォルダが開く
+4. 原稿・表紙・A+画像がすべて見れる
+
+**Codex Cloud（ブラウザ版）で書籍を作った場合:**
+1. GitHub で Merge を完了する
+2. デスクトップの **「BookDownload」をダブルクリック**
+3. GitHubから最新データを取得し、画像が復元され、フォルダが開く
 
 **うまくいかない場合:** 「スクリプトが見つかりません」と出る場合は、Step 7 のダウンロードが正しくできているか確認してください。
 
