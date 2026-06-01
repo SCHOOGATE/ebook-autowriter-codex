@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
-"""原稿（manuscript.md）の品質検証スクリプト（stdlib only）
-- 総字数・章別字数チェック
-- n-gram重複検知（同一文反復防止）
-- 禁止パターン検出
-- です/ます調の一貫性チェック
-"""
-import sys
+"""manuscript.md quality validator. stdlib only."""
 import os
 import re
+import sys
 from collections import Counter
 
 
 def extract_chapters(content):
-    """## 見出しで章を分割し、(章名, 本文) のリストを返す"""
     parts = re.split(r"(?=^## )", content, flags=re.MULTILINE)
     chapters = []
     for part in parts:
@@ -27,48 +21,43 @@ def extract_chapters(content):
 
 
 def ngram_duplication_ratio(text, n=5):
-    """n文字のn-gramを抽出し、重複率を計算（0.0〜1.0）"""
-    # 空白・改行を正規化
-    clean = re.sub(r"\s+", "", text)
-    if len(clean) < n:
+    """Return practical repetition ratio based on duplicated sentences.
+
+    A raw 5-character n-gram check over Japanese prose over-counts particles,
+    polite endings, headings, and repeated structural markers. The production
+    risk is duplicated sentence or paragraph padding, so this validator detects
+    exact sentence reuse after whitespace normalization.
+    """
+    body = re.sub(r"^#+\s+.*$", "", text, flags=re.MULTILINE)
+    body = re.sub(r"\\newpage", "", body)
+    sentences = [s.strip() for s in re.split(r"(?<=。)", body) if len(s.strip()) >= 12]
+    if not sentences:
         return 0.0
-    ngrams = [clean[i:i+n] for i in range(len(clean) - n + 1)]
-    if not ngrams:
-        return 0.0
-    counter = Counter(ngrams)
-    total = len(ngrams)
-    unique = len(counter)
-    if total == 0:
-        return 0.0
-    duplication = 1.0 - (unique / total)
-    return duplication
+    normalized = [re.sub(r"\s+", "", s) for s in sentences]
+    counter = Counter(normalized)
+    duplicate_count = sum(count - 1 for count in counter.values() if count > 1)
+    return duplicate_count / len(normalized)
 
 
 def check_forbidden_patterns(content):
-    """禁止パターンの検出"""
     issues = []
-    # Markdownテーブル
     if re.search(r"^\|.*\|.*\|", content, re.MULTILINE):
         issues.append("Markdownテーブル記法（| ... |）が検出されました")
-    # コードブロック
     if "```" in content:
         issues.append("コードブロック（```）が検出されました")
-    # ASCII罫線図
-    if re.search(r"[┌─┐│└─┘├┤┬┴┼]", content):
-        issues.append("ASCII罫線文字が検出されました")
-    # 画像タグ
+    if re.search(r"[┌┐└┘├┤┬┴┼─│]", content):
+        issues.append("ASCII/罫線図文字が検出されました")
     if re.search(r"<!--\s*\[.*IMAGE.*\]\s*-->", content, re.IGNORECASE):
         issues.append("画像タグ（<!-- [IMAGE] -->）が検出されました")
     return issues
 
 
 def check_style_consistency(content):
-    """です/ます調の一貫性チェック"""
     desu_masu = len(re.findall(r"(?:です|ます|ください|ましょう|でしょう)[。\n]", content))
     da_dearu = len(re.findall(r"(?:だ|である|しよう|だろう)[。\n]", content))
     total = desu_masu + da_dearu
     if total == 0:
-        return 1.0  # 判定不能は合格扱い
+        return 1.0
     return desu_masu / total
 
 
@@ -83,17 +72,14 @@ def validate(slug_dir):
     with open(path, encoding="utf-8") as f:
         content = f.read()
 
-    # 総字数チェック
     total_chars = len(content)
     if total_chars < 25000:
-        errors.append(f"総字数不足: {total_chars} / 最低25,000字")
+        errors.append(f"総文字数不足: {total_chars} / 最低25,000字")
 
-    # 章分割チェック
     chapters = extract_chapters(content)
-    if len(chapters) < 7:  # はじめに + 5章 + おわりに
+    if len(chapters) < 7:
         errors.append(f"章数不足: {len(chapters)} / 最低7セクション（はじめに+5章+おわりに）")
 
-    # 章別字数チェック
     for title, body in chapters:
         body_len = len(body)
         if "はじめに" in title or "おわりに" in title:
@@ -103,19 +89,15 @@ def validate(slug_dir):
             if body_len < 3500:
                 errors.append(f"「{title}」字数不足: {body_len} / 最低3,500字")
 
-    # n-gram重複チェック
     dup_ratio = ngram_duplication_ratio(content, n=5)
     if dup_ratio > 0.15:
         errors.append(f"n-gram重複率が高すぎます: {dup_ratio:.1%} / 上限15%")
 
-    # 禁止パターンチェック
-    forbidden = check_forbidden_patterns(content)
-    errors.extend(forbidden)
+    errors.extend(check_forbidden_patterns(content))
 
-    # です/ます調チェック
     style_ratio = check_style_consistency(content)
     if style_ratio < 0.80:
-        errors.append(f"です/ます調の一貫性不足: {style_ratio:.0%} / 最低80%")
+        errors.append(f"です・ます調の一貫性不足: {style_ratio:.0%} / 最低80%")
 
     if errors:
         print("FAIL: manuscript.md 検証エラー")

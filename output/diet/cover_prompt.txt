@@ -1,29 +1,20 @@
 style: "B（イラスト＋テキスト型）"
-color_palette:
+colors:
   main: "#E8F5E9"
   accent: "#FF6B6B"
   highlight: "#2E7D32"
 prompt: |
   Professional Kindle book cover, portrait orientation 2:3 ratio (1600x2560px).
-
-  Title: "食べないダイエットをやめなさい" in large bold Japanese text, centered upper area.
-
-  Subtitle: "空腹・我慢・自己嫌悪から抜け出す、食べて整える新しい減量習慣" in smaller Japanese text below title.
-
-  Style: Modern health and lifestyle illustration plus strong Japanese typography. Clean, warm, approachable, and practical. A calm Japanese adult reader choosing a balanced meal with protein, vegetables, soup, and rice, with a bright hopeful atmosphere. Avoid extreme before-after body imagery. Avoid medical or clinic-like visuals. Communicate sustainable diet, self-kindness, and healthy daily habits.
-
+  Title: "初心者のためのゆるダイエット入門" in large bold Japanese text, centered upper area.
+  Subtitle: "忙しくても続く食事管理と宅トレの始め方" in smaller Japanese text below title.
+  Style: warm modern health illustration, beginner-friendly diet guide, light home kitchen and simple home workout mood, approachable and clean.
   Color palette: #E8F5E9 / #FF6B6B / #2E7D32
-
   Design:
   - Z-pattern eye flow
   - Title text clearly readable
   - Professional modern Kindle cover
-  - High contrast between text and background
-  - Fresh healthy diet mood
-  - Friendly illustration with balanced meal and gentle lifestyle elements
+  - Healthy, calm, practical atmosphere
+  - Include subtle illustration elements such as balanced meal plate, yoga mat, sneakers, and home interior
   - DO NOT include any author name on the cover
   - No watermarks, no logos
-  - No misleading medical claims
-  - No exaggerated thin body imagery
-
   High resolution, 4K quality.
