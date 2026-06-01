@@ -16,7 +16,7 @@
 
 | 必要なもの | 補足 |
 |-----------|------|
-| Windows 10 または 11 のパソコン | Mac では動作しません |
+| Windows または Mac のパソコン | どちらでも動作します（本ガイドはWindows向けの手順です。Mac版は別途ご案内） |
 | インターネット接続 | Wi-Fi でも有線でもOK |
 | ChatGPT Plus（月額$20）または Pro（月額$200）のアカウント | まだの方は https://chat.openai.com/ で登録してください |
 | Google Chrome ブラウザ | まだの方は https://www.google.com/chrome/ からインストールしてください |
