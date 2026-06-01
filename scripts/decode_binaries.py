@@ -57,9 +57,10 @@ def main():
     restored = 0
     for entry in manifest:
         rel_path = entry['relative_path']
-        flat_name = rel_path.replace(os.sep, '_') + '.b64'
+        # クロスプラットフォーム対応: manifest内のパスは常に '/' 区切り
+        flat_name = rel_path.replace('/', '_') + '.b64'
         b64_path = os.path.join(binaries_dir, flat_name)
-        dst_path = os.path.join(output_dir, rel_path)
+        dst_path = os.path.join(output_dir, rel_path.replace('/', os.sep))
 
         if not os.path.isfile(b64_path):
             print(f"  SKIP: {flat_name} が見つかりません")

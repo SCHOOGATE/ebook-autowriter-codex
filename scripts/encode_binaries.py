@@ -30,16 +30,17 @@ def encode_file(src_path: str, dst_path: str) -> dict:
     raw = base64.b64encode(data).decode('ascii')
     # 76文字ごとに改行（MIME標準準拠）— Codex UI diff描画のフリーズ防止
     encoded = '\n'.join(raw[i:i+76] for i in range(0, len(raw), 76))
+    file_content = encoded + '\n'
 
     os.makedirs(os.path.dirname(dst_path), exist_ok=True)
     with open(dst_path, 'w', encoding='utf-8') as f:
-        f.write(encoded + '\n')
+        f.write(file_content)
 
     return {
         'original': os.path.basename(src_path),
         'encoded': os.path.basename(dst_path),
         'original_size': len(data),
-        'encoded_size': len(encoded),
+        'encoded_size': len(file_content),
     }
 
 
@@ -81,14 +82,16 @@ def encode_and_cleanup(output_dir: str) -> int:
 
     new_count = 0
     for src_path in binaries:
-        rel_path = os.path.relpath(src_path, output_dir)
+        # クロスプラットフォーム対応: パス区切りを常に '/' に統一
+        rel_path = os.path.relpath(src_path, output_dir).replace(os.sep, '/')
 
-        # 既にエンコード済みならスキップ
-        if rel_path in existing_paths:
-            continue
-
-        flat_name = rel_path.replace(os.sep, '_') + '.b64'
+        flat_name = rel_path.replace('/', '_') + '.b64'
         dst_path = os.path.join(binaries_dir, flat_name)
+
+        # 既にエンコード済みの場合は上書き（ユーザーが再生成した場合の対応）
+        if rel_path in existing_paths:
+            manifest = [e for e in manifest if e['relative_path'] != rel_path]
+            print(f"  OVERWRITE: {rel_path} の既存Base64を上書きします")
 
         info = encode_file(src_path, dst_path)
         info['relative_path'] = rel_path
