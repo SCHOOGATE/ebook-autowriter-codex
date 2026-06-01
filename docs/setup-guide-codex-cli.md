@@ -378,7 +378,7 @@ powershell -ExecutionPolicy Bypass -File scripts\create_shortcuts.ps1
 3. デスクトップに **「BookRestore」** と **「BookDownload」** の2つのアイコンが作成されます
    > [スクリーンショット撮影ポイント] デスクトップに作成された2つのアイコンを撮影
 
-### 使い方
+### 使い方（どちらか1つだけクリックしてください。両方クリックする必要はありません）
 
 **Codex CLI で書籍を作った場合（通常の使い方）:**
 1. Codex CLI での制作が完了する
