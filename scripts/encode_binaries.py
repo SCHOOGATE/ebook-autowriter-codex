@@ -27,11 +27,13 @@ def encode_file(src_path: str, dst_path: str) -> dict:
     with open(src_path, 'rb') as f:
         data = f.read()
 
-    encoded = base64.b64encode(data).decode('ascii')
+    raw = base64.b64encode(data).decode('ascii')
+    # 76文字ごとに改行（MIME標準準拠）— Codex UI diff描画のフリーズ防止
+    encoded = '\n'.join(raw[i:i+76] for i in range(0, len(raw), 76))
 
     os.makedirs(os.path.dirname(dst_path), exist_ok=True)
     with open(dst_path, 'w', encoding='utf-8') as f:
-        f.write(encoded)
+        f.write(encoded + '\n')
 
     return {
         'original': os.path.basename(src_path),
