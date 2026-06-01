@@ -5,7 +5,7 @@ echo   書籍画像復元（Codex CLI用）
 echo ========================================
 echo.
 
-cd /d "C:\Users\user\repos\ebook-autowriter-codex"
+cd /d "%USERPROFILE%\repos\ebook-autowriter-codex"
 
 echo [1/2] 最新の書籍を検索中...
 for /f "delims=" %%i in ('dir /b /ad /o-d output\ 2^>nul') do (

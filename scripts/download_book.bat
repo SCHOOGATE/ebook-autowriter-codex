@@ -5,7 +5,7 @@ echo   書籍ダウンロード
 echo ========================================
 echo.
 
-cd /d "C:\Users\user\repos\ebook-autowriter-codex"
+cd /d "%USERPROFILE%\repos\ebook-autowriter-codex"
 
 echo [1/3] GitHubから最新データを取得中...
 git pull origin main
