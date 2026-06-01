@@ -1,0 +1,37 @@
+[
+  {
+    "original": "cover.jpg",
+    "encoded": "images_cover.jpg.b64",
+    "original_size": 300177,
+    "encoded_size": 405503,
+    "relative_path": "images/cover.jpg"
+  },
+  {
+    "original": "aplus_3.png",
+    "encoded": "images_aplus_3.png.b64",
+    "original_size": 431976,
+    "encoded_size": 583547,
+    "relative_path": "images/aplus_3.png"
+  },
+  {
+    "original": "aplus_2.png",
+    "encoded": "images_aplus_2.png.b64",
+    "original_size": 374076,
+    "encoded_size": 505331,
+    "relative_path": "images/aplus_2.png"
+  },
+  {
+    "original": "aplus_4.png",
+    "encoded": "images_aplus_4.png.b64",
+    "original_size": 362689,
+    "encoded_size": 489951,
+    "relative_path": "images/aplus_4.png"
+  },
+  {
+    "original": "aplus_1.png",
+    "encoded": "images_aplus_1.png.b64",
+    "original_size": 363836,
+    "encoded_size": 491500,
+    "relative_path": "images/aplus_1.png"
+  }
+]
