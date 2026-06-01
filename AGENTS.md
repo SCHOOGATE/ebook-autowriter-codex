@@ -955,6 +955,7 @@ Phase 6/7 で `validate_images.py` を実行すれば、追加の手順は不要
 - **validate_images.py が自動でBase64化＋元ファイル削除する。手動エンコードは不要**
 - **PR作成時にワークスペースにバイナリが残っていないことを確認する**
 - **画像内の日本語テキストはgpt-image-2のプロンプトに含めて描画する（Pillow/PILでのテキスト描画は禁止。Codex環境に日本語フォントがない）**
+- **表紙・A+画像はHTML/CSS/SVGで描画しない。必ずChatGPT Images 2.0（ブラウザ版 chatgpt.com）でChrome DevTools経由で生成する**
 
 ---
 
