@@ -1637,6 +1637,11 @@ Phase 6/7 で `validate_images.py` を実行すれば、追加の手順は不要
 - **pip install はエージェントフェーズで実行しない（setup.shで事前インストール済み）**
 - **pandoc は使用しない**
 - **検証スクリプトはPython標準ライブラリのみで動作する**
+- **ファイルのエンコーディングはUTF-8を厳守する**:
+  - Pythonでファイルを書く場合: `open(path, 'w', encoding='utf-8')` を必ず指定
+  - ファイル冒頭にBOM（`\ufeff`）を入れない
+  - **ファイル内容の確認にPowerShellの `Get-Content` や `type` コマンドを使わない**（Windows環境ではcp932で読むため日本語が文字化けする）。代わりにPythonで `open(path, encoding='utf-8').read()` で確認するか、validateスクリプトを使う
+  - `Get-Content` の文字化けを見て「ファイルが壊れている」と判断してはならない。validateスクリプトがPASSしていればファイルは正常
 - **表紙画像はJPG形式で出力する（PNG生成時はJPGに変換）**
 - **バイナリファイル（.png .jpg .jpeg .docx）を直接 git add / git commit してはならない**
 - **validate_images.py が自動でBase64化＋元ファイル削除する。手動エンコードは不要**
