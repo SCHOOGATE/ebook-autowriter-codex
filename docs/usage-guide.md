@@ -43,13 +43,21 @@ Step 5: 完成データを取得する
 cd %USERPROFILE%\repos\ebook-autowriter-codex
 ```
 
-5. 続けて、以下を **そのままコピーして貼り付け**、Enterキーを押します
+5. 続けて、以下を **そのままコピーして貼り付け**、Enterキーを押します（最新版に更新されます）
+
+```
+git pull
+```
+
+> 「Already up to date.」と表示された場合はすでに最新です。ファイル名が表示された場合は更新が完了しています。
+
+6. 続けて、以下を **そのままコピーして貼り付け**、Enterキーを押します
 
 ```
 codex exec --dangerously-bypass-approvals-and-sandbox "AGENTS.mdの指示に従って「{テーマ}の電子書籍を制作」を開始してください。"
 ```
 
-6. **「Reading additional input from stdin...」** と表示されたら、準備完了です。AIが動き始めます
+7. **「Reading additional input from stdin...」** と表示されたら、準備完了です。AIが動き始めます
 
 > **コピーの仕方**: 上の文字を左クリックしながらなぞって青く選択 → 右クリック →「コピー」。コマンドプロンプトに貼り付けるときは、黒い画面の上で右クリックすると貼り付けられます。
 
