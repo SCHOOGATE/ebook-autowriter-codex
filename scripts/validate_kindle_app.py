@@ -34,6 +34,19 @@ def validate(slug_dir):
         desc_chars = len(plain_text.strip())
         if desc_chars < 2500:
             errors.append(f"書籍説明文の文字数不足: {desc_chars} / 最低2,500字")
+        # 段落反復検出
+        sentences = [s.strip() for s in re.split(r"[。\n]", plain_text) if len(s.strip()) >= 20]
+        if sentences:
+            from collections import Counter
+            sent_counts = Counter(sentences)
+            repeated = {s: c for s, c in sent_counts.items() if c >= 3}
+            if repeated:
+                sample = list(repeated.keys())[0][:60]
+                total_repeats = sum(c - 1 for c in repeated.values())
+                errors.append(
+                    f"書籍説明文に段落反復 {total_repeats} 箇所 "
+                    f"(同一文3回以上): \"{sample}...\""
+                )
     else:
         errors.append("書籍説明文セクションが見つかりません")
 
