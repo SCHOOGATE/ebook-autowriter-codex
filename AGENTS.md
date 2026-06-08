@@ -1516,15 +1516,44 @@ Step 2.5: モデル確認（DALL-Eフォールバック防止）
   │  → ページ上部のモデル表示を確認
   │  → 「4o」以外: モデル選択UIで「4o」を選択し直す
   ▼
-Step 3: プロンプト入力
-  │  mcp__chrome-devtools__take_snapshot()
-  │  → プロンプト入力欄の uid を特定
-  │  mcp__chrome-devtools__fill(uid, value=プロンプト)
+Step 3: プロンプト入力（★日本語文字化け防止 — evaluate_script方式を使う）
+  │
+  │  ⚠ fill() は ChatGPT の ProseMirror 入力欄で日本語が文字化けするため使用禁止。
+  │  以下の evaluate_script 方式で入力する:
+  │
+  │  mcp__chrome-devtools__evaluate_script(expression=`
+  │    // ChatGPTの入力欄を特定（ProseMirror contenteditable）
+  │    const editor = document.querySelector('#prompt-textarea, [contenteditable="true"]');
+  │    if (editor) {
+  │      editor.focus();
+  │      // 既存テキストをクリア
+  │      editor.textContent = '';
+  │      // プロンプトをセット（ProseMirror用に<p>タグで囲む）
+  │      const lines = PROMPT_TEXT.split('\\n');
+  │      editor.innerHTML = lines.map(l => '<p>' + l + '</p>').join('');
+  │      // Reactの状態同期のためinputイベントを発火
+  │      editor.dispatchEvent(new Event('input', { bubbles: true }));
+  │    }
+  │  `)
+  │
+  │  ※ PROMPT_TEXT にはcover_prompt.txtの全文を文字列として埋め込む
+  │  ※ プロンプト内のバッククォート(`)はエスケープする
+  │  ※ evaluate_script でも文字化けする場合の代替:
+  │     → mcp__chrome-devtools__click(入力欄uid) で入力欄にフォーカス
+  │     → mcp__chrome-devtools__type_text(text=プロンプト) で1文字ずつ入力
+  │     → type_text は遅いが文字化けしない最終手段
+  │
+  │  入力後、mcp__chrome-devtools__take_screenshot() で
+  │  入力欄に日本語が正しく表示されていることを目視確認する
   ▼
 Step 4: 送信
-  │  mcp__chrome-devtools__take_snapshot()
-  │  → 送信ボタンの uid を特定
-  │  mcp__chrome-devtools__click(uid)
+  │  mcp__chrome-devtools__take_screenshot()
+  │  → 送信ボタンを確認
+  │  → mcp__chrome-devtools__evaluate_script(expression=`
+  │      document.querySelector('[data-testid="send-button"]').click();
+  │    `)
+  │  → evaluate_script で送信できない場合:
+  │     mcp__chrome-devtools__take_snapshot() → 送信ボタンuid特定 → click(uid)
   ▼
 Step 5: 生成待ち（ポーリング方式）
   │  sleep 30（初回待機）
