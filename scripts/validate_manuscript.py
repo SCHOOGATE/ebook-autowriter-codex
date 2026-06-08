@@ -163,14 +163,20 @@ def validate(slug_dir):
     if len(chapters) < 7:
         errors.append(f"章数不足: {len(chapters)} / 最低7セクション（はじめに+5章+おわりに）")
 
+    # Chapter length check with graduated thresholds
+    # Ch1=3000, Ch2=3500, Ch3=5000(Solution), Ch4=4000, Ch5=2500
+    chapter_min = {1: 3000, 2: 3500, 3: 5000, 4: 4000, 5: 2500}
+    ch_num = 0
     for title, body in chapters:
         body_len = len(body)
         if "はじめに" in title or "おわりに" in title:
-            if body_len < 1000:
-                errors.append(f"「{title}」字数不足: {body_len} / 最低1,000字")
+            if body_len < 1200:
+                errors.append(f"「{title}」字数不足: {body_len} / 最低1,200字")
         elif title.startswith("第") or re.match(r"\d+章", title):
-            if body_len < 3500:
-                errors.append(f"「{title}」字数不足: {body_len} / 最低3,500字")
+            ch_num += 1
+            min_len = chapter_min.get(ch_num, 3000)
+            if body_len < min_len:
+                errors.append(f"「{title}」字数不足: {body_len} / 最低{min_len}字")
 
     dup_ratio = ngram_duplication_ratio(content, n=5)
     if dup_ratio > 0.15:
