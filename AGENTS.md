@@ -866,18 +866,35 @@ python scripts/validate_manuscript.py output/{slug}
 
 manuscript.md の検証PASS後、manuscript.html についても以下を確認する:
 
+**★ HTML書き込みは必ず UTF-8 で行う（最重要）:**
+```python
+# 正しい書き方（UTF-8を明示）
+with open('manuscript.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+# 禁止（エンコーディング指定なし → Windows環境でcp932になる）
+with open('manuscript.html', 'w') as f:
+    f.write(html_content)
 ```
-確認項目（目視 or grepで確認）:
-1. <h2> タグに page-break-before: always が適用されているか
-2. <h3> タグに page-break-before: always が適用されているか
-3. <strong> タグが各段落に1〜2箇所使われているか（重要キーワードの強調）
-4. <div class="point"> が各章に1〜2箇所あるか（ポイントボックス）
-5. 目次の <a href="#ch1"> 等のリンクが実際のIDと一致しているか
-6. タイトルページに書籍タイトル・サブタイトル・著者名の3要素があるか
-7. HTMLが閉じタグ不足なく valid であるか（</body></html>で終わるか）
+**テスト実績: エンコーディング指定なしで書き込んだ結果、タイトルが`???????????????`に文字化け（419行）。**
+
+```
+確認項目:
+1. <title>タグに正しい日本語タイトルが入っているか（?????は文字化け）
+2. <h1>タグに正しい日本語タイトルが入っているか
+3. <h2> タグに page-break-before: always が適用されているか
+4. <h3> タグに page-break-before: always が適用されているか
+5. <strong> タグが各段落に1〜2箇所使われているか（5重ネスト禁止: <strong><strong><strong>は不正）
+6. <div class="point"> が各章に1〜2箇所あるか
+7. 目次の <a href="#ch1"> 等のリンクが実際のIDと一致しているか
+8. タイトルページに書籍タイトル・サブタイトル・著者名の3要素があるか
+9. HTMLが閉じタグ不足なく valid であるか（</body></html>で終わるか）
+10. ファイル全体に ? が連続する箇所がないか（文字化けの兆候）
 ```
 
 **HTML版にMarkdown記法（##, **, - 等）が残っている場合は変換失敗。再生成する。**
+**HTML版にフィラーテキスト（「視点を加えてください」等）が残っている場合も再生成する。**
+**<strong>の多重ネスト（<strong><strong><strong>...）が検出された場合は再生成する。**
 
 ### テンプレート残骸・指示文の混入禁止（★致命的品質バグ）
 

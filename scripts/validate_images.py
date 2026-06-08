@@ -14,8 +14,38 @@ MIN_COVER_SIZE = 50 * 1024    # 50KB
 MIN_APLUS_SIZE = 30 * 1024    # 30KB
 
 
+def get_image_dimensions(path):
+    """Get image width and height from file header (stdlib only, no PIL)."""
+    try:
+        with open(path, 'rb') as f:
+            header = f.read(32)
+            # PNG
+            if header[:8] == b'\x89PNG\r\n\x1a\n':
+                w = int.from_bytes(header[16:20], 'big')
+                h = int.from_bytes(header[20:24], 'big')
+                return w, h
+            # JPEG
+            if header[:2] == b'\xff\xd8':
+                f.seek(0)
+                data = f.read()
+                i = 2
+                while i < len(data) - 9:
+                    if data[i] != 0xFF:
+                        break
+                    marker = data[i + 1]
+                    if marker in (0xC0, 0xC1, 0xC2):
+                        h = int.from_bytes(data[i+5:i+7], 'big')
+                        w = int.from_bytes(data[i+7:i+9], 'big')
+                        return w, h
+                    seg_len = int.from_bytes(data[i+2:i+4], 'big')
+                    i += 2 + seg_len
+    except Exception:
+        pass
+    return None, None
+
+
 def validate_cover(slug_dir):
-    """表紙画像の検証"""
+    """Cover image validation with size and resolution check."""
     path = os.path.join(slug_dir, "images", "cover.jpg")
     if not os.path.exists(path):
         path = os.path.join(slug_dir, "images", "cover.png")
@@ -26,11 +56,17 @@ def validate_cover(slug_dir):
     if size < MIN_COVER_SIZE:
         return f"cover画像のサイズが小さすぎます: {size:,}B / 最低{MIN_COVER_SIZE:,}B（ダミー画像の可能性）"
 
+    w, h = get_image_dimensions(path)
+    if w and h:
+        print(f"  cover resolution: {w}x{h}")
+        if w < 1000 or h < 1500:
+            return f"cover解像度が低すぎます: {w}x{h} / 推奨1600x2560以上"
+
     return None
 
 
 def validate_aplus(slug_dir):
-    """A+コンテンツ画像4枚の検証"""
+    """A+ content images validation with size and resolution check."""
     issues = []
     for i in range(1, 5):
         path = os.path.join(slug_dir, "images", f"aplus_{i}.png")
@@ -40,6 +76,9 @@ def validate_aplus(slug_dir):
         size = os.path.getsize(path)
         if size < MIN_APLUS_SIZE:
             issues.append(f"aplus_{i}.png のサイズが小さすぎます: {size:,}B / 最低{MIN_APLUS_SIZE:,}B")
+        w, h = get_image_dimensions(path)
+        if w and h:
+            print(f"  aplus_{i} resolution: {w}x{h}")
     return issues
 
 
