@@ -1,0 +1,9 @@
+[
+  {
+    "original": "cover.jpg",
+    "encoded": "images_cover.jpg.b64",
+    "original_size": 788022,
+    "encoded_size": 1064521,
+    "relative_path": "images/cover.jpg"
+  }
+]
