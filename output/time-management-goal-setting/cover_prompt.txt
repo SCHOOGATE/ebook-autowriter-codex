@@ -1,53 +1,31 @@
-subject: |
-  A hybrid illustration and text book cover for a Japanese productivity guide.
-  Central motif: a tired office worker standing at a desk covered with sticky notes, then calmly moving three priority cards onto a clean weekly calendar while morning light enters from the right side.
-  Target reader: a busy Japanese office worker in their 30s or 40s balancing work, study, side projects, and family responsibilities.
-  The cover should immediately communicate: this book helps readers turn vague goals into realistic weekly actions without overloading their schedule.
+* Subject:
+  Create a premium Japanese Kindle business/self-help book cover for the book titled 「忙しい人のための時間管理入門」.
+  The cover is about time management and goal setting for busy adults who want to balance work, learning, and side projects.
+  Main visual concept: a clean, symbolic scene showing a large elegant analog clock, a focused weekly planner with blank blocks, and three simple priority cards without text, arranged like a calm reset from chaos to clarity.
+  Use ONLY the following Japanese text on the cover:
+  Main title: 「忙しい人のための時間管理入門」
+  Subtitle: 「仕事・学習・副業を回す目標設定の基本」
+  Do not add any other Japanese, English, numbers, labels, handwritten notes, sticky-note text, author name, ISBN, barcode, price, logo, badge, or watermark.
 
-layout: |
-  Vertical 2:3 ratio Kindle cover (1600x2560px, 300DPI, print-ready).
-  3-section composition with clear visual hierarchy:
-  - Top band (28%): #2C3E50 navy background. Main title in bold Japanese sans-serif, centered horizontally. Title font size must dominate this area.
-  - Middle area (52%): #FFFFFF white background with central motif illustration. Place the worker slightly left of center, with a clean weekly calendar and three colored priority cards on the right.
-  - Bottom band (20%): #E8C547 mustard background with subtitle in smaller text.
-  - #C0392B red thin divider strips (2-3px) between sections for visual separation.
-  - Z-pattern eye flow: title -> motif -> subtitle.
-  DO NOT include any author name, writer name, or 著者 text anywhere on the cover.
-  DO NOT include ISBN, barcode, price, or publisher logo.
+* Layout:
+  Vertical 2:3 Kindle cover, print-ready commercial composition.
+  Top 45%: deep navy background (#0F2438) with the main title in very large, crisp, bold Japanese sans-serif type.
+  The main title must be the dominant element and must remain readable at a small Amazon thumbnail size.
+  Center 38%: minimal premium illustration on a warm white background (#F7F4EF): analog clock on the left, clean weekly planner on the right, three blank priority cards moving toward the planner.
+  Bottom 17%: mustard-gold band (#E5B83E) containing the subtitle in dark navy.
+  Use thin red accent divider lines (#C0392B) between the title area, visual area, and subtitle band.
+  Keep generous margins and avoid crowded details.
 
-typography: |
-  Main title 「忙しい人のための時間管理入門」
-    — Size: occupies 60-70% of top band width
-    — Weight: Extra Bold / Black
-    — Font: Japanese sans-serif (Noto Sans JP Black equivalent)
-    — Color: #FFFFFF
-    — Shadow: subtle drop shadow for depth (opacity 20%, offset 2px)
-  Subtitle 「仕事・学習・副業を回す目標設定の基本」
-    — Size: 40-50% of bottom band width
-    — Weight: Medium / Regular
-    — Font: Japanese sans-serif
-    — Color: #2C3E50
-  CRITICAL: All Japanese text MUST be rendered in actual Japanese characters.
-  DO NOT translate, romanize, or use placeholder text.
-  Japanese text must be crisp, clean, and perfectly legible at thumbnail size.
+* Visuals:
+  Color scheme: deep navy #0F2438, warm white #F7F4EF, mustard gold #E5B83E, accent red #C0392B, dark charcoal #17212B.
+  Visual style: modern Japanese business book cover, premium editorial design, clean flat illustration with subtle dimensional shadows.
+  The clock, planner, and priority cards should be simple, iconic, and polished, not a busy office scene.
+  The planner may show blank calendar blocks and check marks only; no written words inside the illustration.
+  Typography must be sharp, correctly rendered Japanese, no garbled characters, no misspellings, no extra text.
+  Avoid messy sticky notes, cluttered desks, realistic people, tiny labels, fake Japanese, pseudo text, decorative borders, and stock-photo feeling.
 
-visuals: |
-  Color palette (strict):
-    Main: #2C3E50 — used for title background and calendar outlines
-    Sub: #E8C547 — used for subtitle area and priority cards
-    Accent: #C0392B — used for dividers and small alert marks on old sticky notes
-    Background: #FFFFFF — used for middle area and breathing space
-  Central motif details:
-    Hybrid style with flat illustration plus text banner. Show messy sticky notes fading on the left and a simplified weekly calendar becoming organized on the right. Use rounded but professional icon shapes for clock, target, notebook, and check mark.
-  Lighting: soft natural light from the upper right, creating a calm morning reset mood.
-  Texture: matte paper texture with subtle shadows under cards and calendar.
-  Clean composition, soft shadows for subtle depth and premium feel.
-  No watermarks, no logos, no ISBN, no decorative borders.
-
-style: |
-  Professional Japanese Kindle book cover design.
-  Quality level: Amazon Kindle ベストセラーTOP10に並ぶ商業品質.
-  Mood: 信頼感, 実践的, 整った, 前向き.
-  Must look polished and premium when displayed as a small thumbnail (120x180px).
-  High resolution 4K, print-ready, 1600x2560px, 300DPI.
+* Style:
+  High-end Japanese Kindle bestseller cover quality, minimal, confident, practical, trustworthy, polished.
+  Strong book-cover hierarchy: title first, simple symbolic visual second, subtitle third.
+  The design should look like a professional productivity book sold on Amazon Japan, not a poster or infographic.
   Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
