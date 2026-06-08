@@ -1,4 +1,4 @@
-style: "A（テキストインパクト型）"
+style: "A・テキストインパクト型"
 colors:
   main: "#FFFFFF"
   accent: "#1A1A2E"
