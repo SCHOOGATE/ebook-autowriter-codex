@@ -52,6 +52,57 @@ def check_forbidden_patterns(content):
     return issues
 
 
+def check_section_homogeneity(content):
+    """Detect cookie-cutter sections where only the title differs."""
+    issues = []
+    sections = re.split(r"(?=^### )", content, flags=re.MULTILINE)
+    section_openings = []
+    for sec in sections:
+        lines = sec.strip().split("\n")
+        if not lines or not lines[0].startswith("### "):
+            continue
+        title = lines[0]
+        # Collect first 5 non-empty body lines (skip title, newpage, empty)
+        body_lines = []
+        for line in lines[1:]:
+            stripped = line.strip()
+            if stripped and stripped != "\\newpage" and not stripped.startswith("#"):
+                body_lines.append(stripped)
+                if len(body_lines) >= 5:
+                    break
+        if len(body_lines) >= 3:
+            section_openings.append((title, body_lines))
+
+    if len(section_openings) < 3:
+        return issues
+
+    # Compare opening structures: normalize by removing section-specific nouns
+    def normalize(text):
+        # Remove quoted section titles and specific nouns to find structural similarity
+        t = re.sub(r"「[^」]+」", "TITLE", text)
+        t = re.sub(r"たとえば.*?という場面", "EXAMPLE", t)
+        return t
+
+    # Check if >50% of sections share the same opening pattern
+    normalized_openings = []
+    for title, body in section_openings:
+        key = "|".join(normalize(line)[:40] for line in body[:3])
+        normalized_openings.append((title, key))
+
+    key_counter = Counter(k for _, k in normalized_openings)
+    most_common_key, most_common_count = key_counter.most_common(1)[0]
+    ratio = most_common_count / len(normalized_openings)
+    if ratio > 0.5 and most_common_count >= 3:
+        # Find example section titles
+        examples = [t for t, k in normalized_openings if k == most_common_key][:3]
+        issues.append(
+            f"section homogeneity: {most_common_count}/{len(normalized_openings)} sections "
+            f"({ratio:.0%}) share identical opening structure. "
+            f"Examples: {', '.join(examples[:3])}"
+        )
+    return issues
+
+
 def check_template_contamination(content):
     """Detect template remnants and process instructions leaked into manuscript."""
     issues = []
@@ -126,6 +177,7 @@ def validate(slug_dir):
         errors.append(f"n-gram重複率が高すぎます: {dup_ratio:.1%} / 上限15%")
 
     errors.extend(check_forbidden_patterns(content))
+    errors.extend(check_section_homogeneity(content))
     errors.extend(check_template_contamination(content))
 
     style_ratio = check_style_consistency(content)

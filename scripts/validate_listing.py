@@ -43,6 +43,34 @@ def validate(slug_dir):
     if "カタカナ" not in content and "ローマ字" not in content:
         errors.append("フリガナセクションが見つかりません")
 
+    # 著者名一貫性チェック（book_meta.md と一致するか）
+    meta_path = os.path.join(slug_dir, "book_meta.md")
+    if os.path.exists(meta_path):
+        with open(meta_path, encoding="utf-8") as mf:
+            meta_content = mf.read()
+        meta_author = None
+        for line in meta_content.split("\n"):
+            m = re.match(r"(?:\*\*)?著者名(?:\*\*)?[：:]\s*(.+)", line)
+            if m:
+                meta_author = m.group(1).strip().strip("*").strip()
+                break
+        if meta_author:
+            # Check if the confirmed author name appears in listing.txt
+            author_section = re.search(r"著者名\s*\n(.+?)(?:\n\n|\n---)", content, re.DOTALL)
+            if author_section:
+                listing_author = author_section.group(1).strip()
+                if meta_author not in listing_author and listing_author not in meta_author:
+                    errors.append(
+                        f"著者名不一致: book_meta.md=\"{meta_author}\" vs "
+                        f"listing.txt=\"{listing_author}\""
+                    )
+
+    # 紹介文タイプ選択チェック
+    type_labels = ["タイプA", "タイプB", "タイプC", "タイプD", "おだやか共感", "成果アピール", "BtoB戦略", "技術入門"]
+    has_type_label = any(label in content for label in type_labels)
+    if not has_type_label:
+        errors.append("紹介文のタイプ選択が明記されていません（タイプA〜Dのいずれかを記載）")
+
     # 紹介文チェック
     intro_match = re.search(r"紹介文.*?(?=======|\Z)", content, re.DOTALL)
     if intro_match:

@@ -31,6 +31,24 @@ def validate(slug_dir):
     if not author_match or len(author_match.group(1).strip()) < 1:
         errors.append("著者名が未設定です（空欄不可）")
 
+    # 文字化け・不正バイト列検出
+    # Shift-JIS mojibake patterns (e.g. 繧ｿ繧､繝医Ν)
+    mojibake_pattern = re.compile(r"[繧繝繧ｧ繧ｩ繧ｫ繧ｭ繧ｯ繧ｱ繧ｳ繧ｵ繧ｷ繧ｹ繧ｻ繧ｿ]{2,}")
+    mojibake_matches = mojibake_pattern.findall(content)
+    if mojibake_matches:
+        errors.append(
+            f"mojibake (garbled text) detected: {len(mojibake_matches)} occurrences, "
+            f"e.g. \"{mojibake_matches[0][:30]}\""
+        )
+    # Zero-width / invisible characters
+    invisible = re.findall(r"[\u200c\u200b\u200d\ufeff]", content)
+    if invisible:
+        errors.append(f"invisible characters detected: {len(invisible)} occurrences")
+    # Tags block (U+E0000-U+E01FF)
+    tags = re.findall(r"[\U000E0000-\U000E01FF]", content)
+    if tags:
+        errors.append(f"Unicode Tags block characters detected: {len(tags)} occurrences")
+
     if errors:
         print("FAIL: book_meta.md 検証エラー")
         for e in errors:

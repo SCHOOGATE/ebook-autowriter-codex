@@ -724,6 +724,24 @@ python scripts/validate_manuscript.py output/{slug}
 - 禁止パターン（テーブル・コードブロック・ASCII図）なし
 - です/ます調 80%以上
 - **テンプレート残骸・指示文混入なし**（下記参照）
+- **節間構造同一性なし** — 50%以上の節が同じ冒頭構造を持つ場合は不合格
+
+### manuscript.html の品質確認（Phase 3完了後に必須）
+
+manuscript.md の検証PASS後、manuscript.html についても以下を確認する:
+
+```
+確認項目（目視 or grepで確認）:
+1. <h2> タグに page-break-before: always が適用されているか
+2. <h3> タグに page-break-before: always が適用されているか
+3. <strong> タグが各段落に1〜2箇所使われているか（重要キーワードの強調）
+4. <div class="point"> が各章に1〜2箇所あるか（ポイントボックス）
+5. 目次の <a href="#ch1"> 等のリンクが実際のIDと一致しているか
+6. タイトルページに書籍タイトル・サブタイトル・著者名の3要素があるか
+7. HTMLが閉じタグ不足なく valid であるか（</body></html>で終わるか）
+```
+
+**HTML版にMarkdown記法（##, **, - 等）が残っている場合は変換失敗。再生成する。**
 
 ### テンプレート残骸・指示文の混入禁止（★致命的品質バグ）
 
@@ -792,9 +810,8 @@ OK（読者が読む文章のみ）:
 
 #### 著者名
 
-```
-{メインKW}（{テーマ1}×{テーマ2}）活用研究室
-```
+**book_meta.md で確定した著者名をそのまま使う。** 独自のペンネーム（「○○活用研究室」等）に勝手に変更しない。
+listing.txt の著者名 = book_meta.md の著者名 = kindle_application.txt の著者名 が完全一致すること。
 
 #### キーワード（7行 × 各50文字以内）
 
@@ -1105,7 +1122,13 @@ typographyブロックにはタイトル・サブタイトル・著者名の3要
 
 **ユーザーが承認したら Phase 6 へ。修正指示があればプロンプトを修正して再提示。**
 
-承認後、`cover_prompt.txt` にYAML形式で保存。
+承認後、`cover_prompt.txt` にYAML形式で保存し、検証を実行:
+
+```bash
+python scripts/validate_cover_prompt.py output/{slug}
+```
+
+**検証基準:** 5ブロック（subject/layout/typography/visuals/style）すべて存在 / 著者名含む / タイトル含む / 500字以上
 
 ---
 
