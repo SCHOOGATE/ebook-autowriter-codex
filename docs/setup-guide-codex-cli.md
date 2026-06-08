@@ -247,14 +247,14 @@ echo %USERNAME%
 4. 「項目の場所を入力してください」という入力欄が表示されます。以下のテキストをコピーして貼り付けます:
 
 ```
-"C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9224 --user-data-dir="C:\Users\あなたのユーザー名\ChromeDebug"
+"C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="C:\Users\あなたのユーザー名\ChromeDebug"
 ```
 
 **重要:** `あなたのユーザー名` の部分を、手順1で確認した実際のユーザー名に置き換えてください。
 
 例: ユーザー名が「tanaka」なら:
 ```
-"C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9224 --user-data-dir="C:\Users\tanaka\ChromeDebug"
+"C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="C:\Users\tanaka\ChromeDebug"
 ```
 
 > [スクリーンショット撮影ポイント] 入力欄にパスを入力した状態を撮影
