@@ -723,6 +723,44 @@ python scripts/validate_manuscript.py output/{slug}
 - n-gram重複率 < 15%
 - 禁止パターン（テーブル・コードブロック・ASCII図）なし
 - です/ます調 80%以上
+- **テンプレート残骸・指示文混入なし**（下記参照）
+
+### テンプレート残骸・指示文の混入禁止（★致命的品質バグ）
+
+**過去のテスト（time-management-goal-setting）で発生した実例:**
+```
+NG（テンプレ残骸が全文末に混入）:
+「必要なのは、作業を増やすことではなく、目標との関係が強い行動を先に置くことです、第1章1節の実践5として確認します。」
+
+OK（読者が読む文章のみ）:
+「必要なのは、作業を増やすことではなく、目標との関係が強い行動を先に置くことです。」
+```
+
+**原稿に以下のパターンが1箇所でもあれば不合格:**
+- `第N章N節の実践Nとして確認します`
+- `Phase N`, `Step N`, `Layer N` 等の工程名
+- `{テーマ}`, `{章タイトル}`, `{slug}` 等のプレースホルダ
+- `TODO`, `FIXME`, `PLACEHOLDER`, `INSERT HERE`
+- `以下を確認する`, `以下を実行する` 等のAGENTS.md内の指示文
+- `YAML`, `validate`, `output/` 等の技術用語
+- `サブエージェント`, `エージェント`, `リサーチ結果` 等の制作プロセス用語
+- `chapter_blueprint`, `research.md`, `book_meta.md` 等のファイル名
+- `Layer 1〜5` 等のリサーチ層の参照
+
+**原稿は「読者が読む本」であり、「AIへの指示書」ではない。**
+制作プロセスの痕跡が1文字でも残っていれば、読者にとって意味不明なノイズになる。
+
+**検出した場合の対処:**
+1. 混入箇所を含む章を特定する
+2. 該当章を全文削除して、読者向けの文章として一から書き直す
+3. 書き直し後、再度 validate_manuscript.py を実行する
+4. **部分置換（sed的な一括削除）は禁止** — 残骸が混入した章は文章構造自体が破綻しているため、パッチではなく書き直しが必要
+
+**予防策（執筆中に守ること）:**
+- AGENTS.md の指示文・テンプレートをそのまま原稿にコピーしない
+- 「{変数名}」のような記法は原稿内で使用しない
+- 各節を書き終えたら、その節を「読者として音読」し、制作プロセスの痕跡がないか確認する
+- 「〜として確認します」「〜を実行します」のような制作者目線の文末は読者目線に変換する
 
 **NGの場合:** 「リトライ時の絶対ルール」に従い、不合格の章を全文削除してから新しく書き直す。既存テキストへのappend禁止。
 
@@ -927,7 +965,7 @@ layout: |
   - Bottom band ({bot_pct}%): {サブカラー} background with subtitle in smaller text.
   - {アクセントカラー} thin divider strips (2-3px) between sections for visual separation.
   - Z-pattern eye flow: title → motif → subtitle の順で自然に視線が流れる構成.
-  DO NOT include any author name, writer name, or 著者 text anywhere on the cover.
+  Author name 「{確定著者名}」 in small text at the bottom of the bottom band (below subtitle).
   DO NOT include ISBN, barcode, price, or publisher logo.
 
 typography: |
@@ -942,6 +980,12 @@ typography: |
     — Weight: Medium / Regular
     — Font: Japanese sans-serif
     — Color: {サブタイトル色}
+  Author name 「{確定著者名}」
+    — Size: 25-30% of bottom band width
+    — Weight: Regular
+    — Font: Japanese sans-serif
+    — Color: {著者名色: サブタイトルより控えめな色}
+    — Position: bottom band の下部、サブタイトルの下に配置
   CRITICAL: All Japanese text MUST be rendered in actual Japanese characters.
   DO NOT translate, romanize, or use placeholder text.
   Japanese text must be crisp, clean, and perfectly legible at thumbnail size.
@@ -978,6 +1022,52 @@ style: |
   Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
 ```
 
+### 表紙プロンプト生成の絶対ルール
+
+**表紙は書籍の「第一印象の営業マン」。読者が3秒で「この本は自分のための本だ」と感じる表紙を作る。**
+
+**ルール1: 書籍の独自価値を表紙モチーフに反映する（汎用イメージ禁止）**
+
+```
+禁止: テーマの一般的なイメージ（時間管理→時計、ダイエット→体重計、AI→ロボット）
+必須: manuscript.md を読み、「この本にしかない独自の価値・メソッド」を視覚化する
+
+手順:
+1. manuscript.md の「はじめに」と各章タイトルを読む
+2. 「この本を読むと読者に何が起きるか」を1文で定義する
+3. その変化を視覚的に表現するモチーフを選ぶ
+
+例:
+  ✗ 時間管理の本 → 時計 + プランナー（どの時間管理本でも使う汎用イメージ）
+  ✓ 「目標を予定表に翻訳する本」→ 大きな目標（山頂の旗）が小さな
+    週間ブロックに分解されていく様子（本書独自の「翻訳」コンセプトを視覚化）
+
+  ✗ ダイエット本 → サラダ + 体重計
+  ✓ 「3食変えずに体脂肪を落とす本」→ 普通の食卓の上に
+    栄養素が可視化された光のレイヤーが浮かぶ（本書独自の「見える化」を視覚化）
+```
+
+**ルール2: 読者の感情を動かすキャッチ要素**
+
+表紙のモチーフは以下のいずれかの感情を喚起すること:
+- **好奇心**: 「何これ？」「どういう意味？」と手に取りたくなる意外性
+- **共感**: 「これ、自分のことだ」と感じるシーン
+- **憧れ**: 「こうなりたい」と感じる変化後のイメージ
+- **緊急性**: 「今読まないとまずい」と感じる切迫感
+
+```
+subject ブロックに必ず含める:
+- 「この表紙を見た読者は {感情} を感じる」を1文で明記
+- ターゲット読者の具体的なペルソナ（年齢・職業・状況）
+- 本書を手に取る理由（他の本ではなくこの本を選ぶ理由）
+```
+
+**ルール3: 5ブロックYAML必須（4ブロックで生成した場合は不合格）**
+
+cover_prompt.txt は必ず `subject / layout / typography / visuals / style` の5ブロックで出力する。
+typographyブロックにはタイトル・サブタイトル・著者名の3要素すべてのサイズ・ウェイト・色・配置を記述する。
+4ブロック（typographyなし）で生成された場合、やり直す。
+
 ### 表紙プロンプト品質チェックリスト（生成前に必ず確認）
 
 生成するYAMLプロンプトが以下を満たしているか確認してから★確認3で提示する:
@@ -990,7 +1080,8 @@ style: |
 - [ ] visuals: スタイル別のビジュアル指示が具体的（スタイルA〜Eのどれか）
 - [ ] visuals: 光源・質感の指示がある
 - [ ] style: ムードキーワードが3語以上ある
-- [ ] 著者名・ISBN・ロゴ・バーコードの除外指示がある
+- [ ] 著者名が typography ブロックに含まれている（book_meta.mdの確定著者名）
+- [ ] ISBN・ロゴ・バーコードの除外指示がある
 
 ### ユーザーに提示する内容
 
@@ -1416,7 +1507,7 @@ Phase 6/7 で `validate_images.py` を実行すれば、追加の手順は不要
 - 表（テーブル）を原稿内で使わない
 - コードブロックを原稿内で使わない
 - 著者情報を原稿本文に入れない
-- 表紙に著者名を入れない
+- **表紙に著者名を必ず入れる**（book_meta.mdの確定著者名を使用。底部にサブタイトルより小さく配置）
 - ASCII罫線図を使わない
 - **pip install はエージェントフェーズで実行しない（setup.shで事前インストール済み）**
 - **pandoc は使用しない**

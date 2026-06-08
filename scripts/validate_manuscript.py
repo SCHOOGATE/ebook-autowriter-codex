@@ -52,6 +52,38 @@ def check_forbidden_patterns(content):
     return issues
 
 
+def check_template_contamination(content):
+    """Detect template remnants and process instructions leaked into manuscript."""
+    issues = []
+    patterns = [
+        (r"第\d+章\d+節の実践\d+として確認します", "template marker (実践N)"),
+        (r"Phase\s*\d+", "process term (Phase N)"),
+        (r"Step\s*[A-Z0-9]", "process term (Step N)"),
+        (r"Layer\s*[1-5]", "research ref (Layer N)"),
+        (r"\{[^}]*テーマ[^}]*\}", "placeholder ({theme})"),
+        (r"\{[^}]*タイトル[^}]*\}", "placeholder ({title})"),
+        (r"\{[^}]*slug[^}]*\}", "placeholder ({slug})"),
+        (r"\bTODO\b", "TODO marker"),
+        (r"\bFIXME\b", "FIXME marker"),
+        (r"\bPLACEHOLDER\b", "PLACEHOLDER marker"),
+        (r"\bINSERT\s+HERE\b", "INSERT HERE marker"),
+        (r"validate_\w+\.py", "script ref (validate_*.py)"),
+        (r"chapter_blueprint", "file ref (chapter_blueprint)"),
+        (r"research\.md", "file ref (research.md)"),
+        (r"book_meta\.md", "file ref (book_meta.md)"),
+        (r"output/", "path ref (output/)"),
+    ]
+    for pat, label in patterns:
+        matches = re.findall(pat, content)
+        if matches:
+            sample = matches[0][:50]
+            issues.append(
+                f"template contamination ({label}): "
+                f"{len(matches)} occurrences, e.g. \"{sample}\""
+            )
+    return issues
+
+
 def check_style_consistency(content):
     desu_masu = len(re.findall(r"(?:です|ます|ください|ましょう|でしょう)[。\n]", content))
     da_dearu = len(re.findall(r"(?:だ|である|しよう|だろう)[。\n]", content))
@@ -94,6 +126,7 @@ def validate(slug_dir):
         errors.append(f"n-gram重複率が高すぎます: {dup_ratio:.1%} / 上限15%")
 
     errors.extend(check_forbidden_patterns(content))
+    errors.extend(check_template_contamination(content))
 
     style_ratio = check_style_consistency(content)
     if style_ratio < 0.80:
