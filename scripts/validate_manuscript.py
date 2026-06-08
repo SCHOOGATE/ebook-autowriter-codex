@@ -108,6 +108,9 @@ def check_template_contamination(content):
     issues = []
     patterns = [
         (r"第\d+章\d+節の実践\d+として確認します", "template marker (実践N)"),
+        (r"を考える時は、.{2,20}を手がかりにして、.+という視点を加えてください", "template filler (視点を加えてください)"),
+        (r"この考え方を.+の流れに置くと、.+は単なる知識ではなく", "template filler (流れに置くと)"),
+        (r"特に「[^」]+」の場面で効いてきます", "template filler (場面で効いてきます)"),
         (r"Phase\s*\d+", "process term (Phase N)"),
         (r"Step\s*[A-Z0-9]", "process term (Step N)"),
         (r"Layer\s*[1-5]", "research ref (Layer N)"),
