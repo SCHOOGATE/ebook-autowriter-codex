@@ -46,7 +46,7 @@ cd %USERPROFILE%\repos\ebook-autowriter-codex
 5. 続けて、以下を **そのままコピーして貼り付け**、Enterキーを押します
 
 ```
-codex exec --dangerously-bypass-approvals-and-sandbox "AGENTS.mdの指示に従って書籍を制作してください。「スタート」から開始してください。"
+codex exec --dangerously-bypass-approvals-and-sandbox "AGENTS.mdの指示に従って「{テーマ}の電子書籍を制作」を開始してください。"
 ```
 
 6. **「Reading additional input from stdin...」** と表示されたら、準備完了です。AIが動き始めます

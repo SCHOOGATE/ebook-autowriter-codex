@@ -1,6 +1,7 @@
-# eBook AutoWriter for Codex v3.2
+# eBook AutoWriter for Codex v4.0
 
 電子書籍（25,000字・5章構成）を対話型でリサーチ → 執筆 → メタデータ → 表紙 → A+画像 → 申請データまで一括生成。
+**画像はすべてChatGPT Images 2.0をChrome DevTools経由で生成する（APIクレジット不要）。**
 **要所でユーザー確認を挟み、承認後に自動進行する。**
 
 ## 言語
@@ -10,17 +11,22 @@
 
 ## 起動方法
 
-ユーザーが「スタート」と入力したら、以下の質問を順番に行う:
+ユーザーが「**{テーマ}の電子書籍を制作**」と入力して起動する。
+（例: 「AI副業の電子書籍を制作」「猫のアロマケアの電子書籍を制作」）
+
+テーマは起動プロンプトから自動抽出し、残りの情報を質問する:
 
 ```
-電子書籍の制作を開始します。以下を教えてください。
+テーマ「{抽出したテーマ}」で電子書籍の制作を開始します。
 
-1. テーマ（必須）: どんな内容の本ですか？
-2. 著者名（必須）: Kindle出版時の著者名
-3. 参考資料（任意）: URL、ファイル、テキストなど
+以下を教えてください。
+1. 著者名（必須）: Kindle出版時の著者名
+2. 参考資料（任意）: URL、ファイル、テキストなど
 ```
 
 回答を受け取ったら、Phase 1 から自動開始する。
+
+※ Codex Cloudではこの起動プロンプトがタスク名になるため、テーマを含めて起動すること。
 
 ## 最重要ルール
 
@@ -55,16 +61,16 @@
 
 ■ コミットルール（バイナリは絶対にコミットしない）:
   - Phase 3〜5 完了時: テキストファイルのみコミット（manuscript/listing/kindle_app等）
-  - Phase 6 完了時: cover_prompt.txt + binaries/*.b64 をコミット（validate_images.pyが自動エンコード済み）
-  - Phase 7 完了時: binaries/*.b64 をコミット（validate_images.pyが自動エンコード済み）
+  - Phase 6 完了時: cover_prompt.txt + binaries/*.b64 をコミット（表紙画像）
+  - Phase 7 完了時: binaries/*.b64 をコミット（A+画像）
   - *.png *.jpg *.jpeg *.docx は直接コミット禁止（validate_images.pyが自動で削除する）
 ```
 
 ## 全体フロー（対話型・7チェックポイント）
 
 ```
-「スタート」
-  ↓ テーマ・著者名・参考資料を質問
+「{テーマ}の電子書籍を制作」
+  ↓ テーマ自動抽出 → 著者名・参考資料を質問
 Phase 1: 入力受付
   ↓
 Phase 2: 5層ディープリサーチ → validate_research.py
@@ -78,13 +84,13 @@ Phase 5: Kindle申請データ生成 → validate_kindle_app.py
   ↓ ここで一旦停止 ↓
 ★確認3: 表紙プロンプト確認（入稿前）
   ↓ 承認後 ↓
-Phase 6: 表紙画像生成（gpt-image-2）→ validate_images.py cover（自動Base64化＋元ファイル削除）→ コミット
+Phase 6: 表紙画像生成（ChatGPT Images 2.0 DevTools経由）→ validate_images.py cover → コミット
   ↓
 ★確認4: 表紙画像の確認（manifest.jsonのサイズ情報を参照）
   ↓ 承認後 ↓
 ★確認5: A+コンテンツ4枚のプロンプト確認
   ↓ 承認後 ↓
-Phase 7: A+画像4枚生成（gpt-image-2）→ validate_images.py aplus（自動Base64化＋元ファイル削除）→ コミット
+Phase 7: A+画像4枚生成（ChatGPT Images 2.0 DevTools経由）→ validate_images.py aplus → コミット
   ↓
 ★確認6: A+画像4枚の確認（manifest.jsonのサイズ情報を参照）
   ↓ 承認後 ↓
@@ -122,7 +128,8 @@ output/{slug}/
 
 ## Phase 1: 入力受付
 
-ユーザーからテーマ・著者名・参考資料を受け取る。
+起動プロンプト「{テーマ}の電子書籍を制作」からテーマを自動抽出済み。
+ユーザーから著者名・参考資料を受け取る。
 
 受け取れる参考資料の形式:
 - ファイル（PDF、テキスト、Markdown、DOCX）
@@ -740,21 +747,12 @@ python scripts/validate_kindle_app.py output/{slug}
 スタイル: {選択スタイル名}
 カラー: {メイン} / {アクセント} / {ハイライト}
 
-プロンプト:
+プロンプト（4ブロック形式）:
 ---
-Professional Kindle book cover, portrait orientation 2:3 ratio (1600x2560px).
-Title: "{確定タイトル}" in large bold Japanese text, centered upper area.
-Subtitle: "{確定サブタイトル}" in smaller Japanese text below title.
-Style: {選択スタイル}
-Color palette: {メイン} / {アクセント} / {ハイライト}
-Design:
-- Z-pattern eye flow
-- Title text clearly readable
-- Professional modern Kindle cover
-- High contrast between text and background
-- DO NOT include any author name on the cover
-- No watermarks, no logos
-High resolution, 4K quality.
+* Subject: Professional Kindle book cover, portrait orientation 2:3 ratio (1600x2560px). Title: "{確定タイトル}" in large bold Japanese text, centered upper area. Subtitle: "{確定サブタイトル}" in smaller Japanese text below title.
+* Layout: Z-pattern eye flow. Title text clearly readable with high contrast against background. DO NOT include any author name on the cover.
+* Visuals: Style: {選択スタイル}. Color palette: {メイン} / {アクセント} / {ハイライト}. Professional modern Kindle cover design. No watermarks, no logos.
+* Style: High resolution, 4K quality. Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
 ---
 
 このプロンプトで表紙を生成してよろしいですか？
@@ -767,9 +765,10 @@ High resolution, 4K quality.
 
 ---
 
-## Phase 6: 表紙画像生成（gpt-image-2）
+## Phase 6: 表紙画像生成（ChatGPT Images 2.0 DevTools経由）
 
 **★確認3 で承認されたプロンプトで画像を生成する。**
+生成手順は後述「ChatGPT Images 2.0 生成プロトコル」に従う。
 
 生成した画像を `output/{slug}/images/cover.jpg` に保存。
 
@@ -830,44 +829,48 @@ A+コンテンツ画像4枚のプロンプトを**ユーザーに提示して承
 これらのプロンプトで画像を生成してよろしいですか？
 ```
 
-### 各画像のプロンプト生成ルール
+### 各画像のプロンプト生成ルール（4ブロック形式）
 
 #### aplus_1.png（問題提起）
 ```
-Wide landscape banner 970x600px. {テーマに関連する読者の悩みや問題状況を視覚化}.
-Dark muted tones suggesting difficulty. Emotional relatable scene.
-Professional advertising banner, modern illustration, no composition labels, no watermarks, 4K.
-NO text labels like "問題提起" inside the image.
+* Subject: Wide landscape banner 970x600px. {テーマに関連する読者の悩みや問題状況を視覚化}.
+* Layout: Dark muted tones suggesting difficulty. Emotional relatable scene. NO text labels like "問題提起" inside the image.
+* Visuals: Professional advertising banner, modern illustration, no composition labels, no watermarks.
+* Style: High contrast, 4K quality. Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
 ```
 
 #### aplus_2.png（煽り・共感）
 ```
-Wide landscape banner 970x600px. {問題が深刻化した状況、読者への共感}.
-Dramatic contrast, intense colors amplifying urgency.
-Professional banner, strong emotional impact, no composition labels, 4K.
+* Subject: Wide landscape banner 970x600px. {問題が深刻化した状況、読者への共感}.
+* Layout: Dramatic contrast, intense colors amplifying urgency.
+* Visuals: Professional banner, strong emotional impact, no composition labels.
+* Style: High contrast, 4K quality. Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
 ```
 
 #### aplus_3.png（解決策）
 ```
-Wide landscape banner 970x600px. {本書の解決策、変化後の明るい状況}.
-Bright optimistic colors, vivid fresh hopeful tones.
-Professional banner, aspirational mood, no composition labels, 4K.
+* Subject: Wide landscape banner 970x600px. {本書の解決策、変化後の明るい状況}.
+* Layout: Bright optimistic colors, vivid fresh hopeful tones.
+* Visuals: Professional banner, aspirational mood, no composition labels.
+* Style: High contrast, 4K quality. Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
 ```
 
 #### aplus_4.png（CTA）
 ```
-Wide landscape banner 970x600px. {本書を手に取る行動を促すビジュアル}.
-Energetic accent colors. Book cover or reading device featured.
-Professional banner, call-to-action focused, no composition labels, 4K.
+* Subject: Wide landscape banner 970x600px. {本書を手に取る行動を促すビジュアル}.
+* Layout: Energetic accent colors. Book cover or reading device featured.
+* Visuals: Professional banner, call-to-action focused, no composition labels.
+* Style: High contrast, 4K quality. Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
 ```
 
 **ユーザーが承認したら Phase 7 へ。**
 
 ---
 
-## Phase 7: A+画像4枚生成（gpt-image-2）
+## Phase 7: A+画像4枚生成（ChatGPT Images 2.0 DevTools経由）
 
 **★確認5 で承認されたプロンプトで画像を生成する。**
+生成手順は後述「ChatGPT Images 2.0 生成プロトコル」に従う。
 
 ### Phase 7 完了時の検証（必須）
 
@@ -954,8 +957,86 @@ Phase 6/7 で `validate_images.py` を実行すれば、追加の手順は不要
 - **バイナリファイル（.png .jpg .jpeg .docx）を直接 git add / git commit してはならない**
 - **validate_images.py が自動でBase64化＋元ファイル削除する。手動エンコードは不要**
 - **PR作成時にワークスペースにバイナリが残っていないことを確認する**
-- **画像内の日本語テキストはgpt-image-2のプロンプトに含めて描画する（Pillow/PILでのテキスト描画は禁止。Codex環境に日本語フォントがない）**
-- **表紙・A+画像はHTML/CSS/SVGで描画しない。必ずChatGPT Images 2.0（ブラウザ版 chatgpt.com）でChrome DevTools経由で生成する**
+- **画像内の日本語テキストはChatGPT Images 2.0のプロンプトに含めて描画する（Pillow/PILでのテキスト描画は禁止。Codex環境に日本語フォントがない）**
+- **全画像（表紙・A+）はHTML/CSS/SVGで描画しない。必ずChatGPT Images 2.0（ブラウザ版 chatgpt.com）でChrome DevTools MCP経由で生成する**
+- **DALL-E 3での生成は禁止。生成前後でモデルがChatGPT Images 2.0 (4o)であることを必ず確認する**
+
+---
+
+## ChatGPT Images 2.0 生成プロトコル（DevTools経由）
+
+Phase 6（表紙）・Phase 7（A+）の全画像生成で共通のプロトコルを使用する。
+Codex CLI環境ではChrome DevTools MCPが `mcp__chrome-devtools__*` として利用可能。
+
+### 前提条件
+
+- `~/.codex/config.toml` に `[mcp_servers.chrome-devtools]` が設定済み
+- Chromeが起動中で、ChatGPTにログイン済み
+
+### 4ブロックプロンプト構造（全画像共通）
+
+すべての画像プロンプトは以下の4ブロック形式で記述する:
+
+```
+* Subject: (画像の主題・内容。日本語テキストを含む場合はここに記載)
+* Layout: (配置・構造・階層・接続関係の指示)
+* Visuals: (色・アイコン・フォント・装飾の指示。カラースキームを明示)
+* Style: (全体のスタイル・品質。末尾に必ず「Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.」を付加)
+```
+
+### 生成フロー（Step 1-8）
+
+```
+Step 1: 接続確認
+  │  mcp__chrome-devtools__list_pages()
+  │  → エラー時: mcp__chrome-devtools__new_page(url="https://chatgpt.com") で復帰
+  ▼
+Step 2: ChatGPT Images 2.0 を新しいタブで開く
+  │  mcp__chrome-devtools__new_page(url="https://chatgpt.com/g/g-2fkFE8rbu-dall-e")
+  │  sleep 5（ページ読み込み待ち）
+  ▼
+Step 2.5: モデル確認（DALL-Eフォールバック防止）
+  │  mcp__chrome-devtools__take_screenshot()
+  │  → ページ上部のモデル表示を確認
+  │  → 「4o」以外: モデル選択UIで「4o」を選択し直す
+  ▼
+Step 3: プロンプト入力
+  │  mcp__chrome-devtools__take_snapshot()
+  │  → プロンプト入力欄の uid を特定
+  │  mcp__chrome-devtools__fill(uid, value=プロンプト)
+  ▼
+Step 4: 送信
+  │  mcp__chrome-devtools__take_snapshot()
+  │  → 送信ボタンの uid を特定
+  │  mcp__chrome-devtools__click(uid)
+  ▼
+Step 5: 生成待ち（ポーリング方式）
+  │  sleep 30（初回待機）
+  │  → mcp__chrome-devtools__take_screenshot() で完了確認
+  │  → 未完了: sleep 15 → 再確認（最大4回）
+  ▼
+Step 6: モデル結果確認
+  │  DALL-E生成の兆候チェック
+  │  → 検知: close_page → 新タブで再生成
+  ▼
+Step 7: 画像保存
+  │  方式A: ダウンロードボタンclick → ~/Downloads から移動
+  │    sleep 3 → LATEST=$(ls -t ~/Downloads/*.png | head -1)
+  │    mv "$LATEST" "output/{slug}/images/{filename}.png"
+  │  方式B: evaluate_script で img src 取得 → curl で保存
+  │  方式C: canvas → base64 → デコード保存
+  ▼
+Step 8: 次の画像 or 完了
+  │  並列モード: new_page で別タブを開き Step 3 から並列
+  │  逐次モード: 同じタブで Step 3 から繰り返し
+  │  完了: close_page で不要タブを閉じる
+```
+
+### 複数枚生成時の注意事項
+
+- 8タブ以上の同時生成はレートリミットの恐れ（6/2セッションで確認済み）
+- 各タブは独立したChatGPTセッション（会話が混ざらない）
+- 生成失敗時は該当タブを close_page → new_page で再生成
 
 ---
 
