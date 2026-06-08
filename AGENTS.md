@@ -738,41 +738,93 @@ python scripts/validate_kindle_app.py output/{slug}
 | 女性向け/エッセイ | #D4A5A5 ローズ | #F4E5C2 アイボリー | #B6852C ゴールド | #FAF6F1 シェル |
 | 心理学/コミュニケーション | #0D1B2A ダークネイビー | #E8872A オレンジ | #D4AF37 ゴールド | #1B2838 ダーク |
 
-### 表紙プロンプトのYAML形式（5ブロック）
+### 表紙プロンプトのYAML形式（5ブロック — cover-master-ss準拠）
 
-プロンプトは以下の5ブロックYAML形式で生成する:
+プロンプトは以下の5ブロックYAML形式で生成する。**各ブロックは具体的かつ詳細に記述すること。曖昧・汎用的な指示は禁止。**
 
 ```yaml
 subject: |
   A {style_keyword} book cover for a Japanese {genre} guide.
-  Central motif: {テーマに関連するビジュアルモチーフの説明}.
-  Target reader: {想定読者の簡潔な説明}.
+  Central motif: {テーマの核心を視覚化する具体的なモチーフ。抽象的な説明ではなく、
+  「疲れた表情のビジネスマンが朝日を浴びて目覚める瞬間」のように具体的なシーンを描写する}.
+  Target reader: {「30代の営業職で初めて部下を持った人」のように具体的なペルソナ}.
+  The cover should immediately communicate: {この本を手に取る理由を1文で}.
 
 layout: |
-  Vertical 2:3 ratio Kindle cover (1600x2560px, 300DPI).
-  - Top 25%: {メインカラー} band with main title in bold Japanese sans-serif
-  - Middle 50%: {背景色} background with {central_motif}
-  - Bottom 25%: {サブカラー} band with subtitle
-  - Accent {アクセントカラー} divider strips between sections
+  Vertical 2:3 ratio Kindle cover (1600x2560px, 300DPI, print-ready).
+  3-section composition with clear visual hierarchy:
+  - Top band ({top_pct}%): {メインカラー} background. Main title in bold Japanese sans-serif,
+    centered horizontally. Title font size must dominate this area.
+  - Middle area ({mid_pct}%): {背景色} background with central motif illustration.
+    {モチーフの具体的な配置: 「中央にやや左寄りで人物、右側にアイコン群を放射状に配置」等}.
+    Breathing space around the motif (余白を十分に確保).
+  - Bottom band ({bot_pct}%): {サブカラー} background with subtitle in smaller text.
+  - {アクセントカラー} thin divider strips (2-3px) between sections for visual separation.
+  - Z-pattern eye flow: title → motif → subtitle の順で自然に視線が流れる構成.
   DO NOT include any author name, writer name, or 著者 text anywhere on the cover.
+  DO NOT include ISBN, barcode, price, or publisher logo.
 
 typography: |
-  Main title "{確定タイトル}" — 48pt, bold Japanese sans-serif, {メインカラーまたは白}
-  Subtitle "{確定サブタイトル}" — 24pt, Japanese sans-serif, {サブカラー}
-  All Japanese text MUST be displayed exactly as specified (no translation, no romanization).
+  Main title 「{確定タイトル}」
+    — Size: occupies 60-70% of top band width
+    — Weight: Extra Bold / Black
+    — Font: Japanese sans-serif (Noto Sans JP Black equivalent)
+    — Color: {タイトル色: スタイルAなら白または黒、Dならゴールド等}
+    — Shadow: subtle drop shadow for depth (opacity 20%, offset 2px)
+  Subtitle 「{確定サブタイトル}」
+    — Size: 40-50% of bottom band width
+    — Weight: Medium / Regular
+    — Font: Japanese sans-serif
+    — Color: {サブタイトル色}
+  CRITICAL: All Japanese text MUST be rendered in actual Japanese characters.
+  DO NOT translate, romanize, or use placeholder text.
+  Japanese text must be crisp, clean, and perfectly legible at thumbnail size.
 
 visuals: |
-  Color palette: {メイン}, {サブ}, {アクセント}, {背景}.
-  {スタイル固有のビジュアル指示: イラストの種類、モチーフの描写、質感}
-  Clean composition, soft shadows for subtle depth.
-  No watermarks, no logos, no ISBN.
+  Color palette (strict):
+    Main: {メイン} — used for title background or primary elements
+    Sub: {サブ} — used for subtitle area and secondary elements
+    Accent: {アクセント} — used for dividers, highlights, key visual accents
+    Background: {背景} — used for middle area and breathing space
+  Central motif details:
+    {スタイル別の具体的なビジュアル指示:
+    - スタイルA: 太い文字が主役。背景は単色またはシンプルなグラデーション。
+      アイコンは最小限（1-2個）で文字の引き立て役に徹する。
+    - スタイルB: フラットイラスト（線なし塗り）で温かみのあるシーン。
+      パステル調の柔らかい色合い。人物やオブジェクトは丸みを帯びたデザイン。
+    - スタイルC: アニメ/マンガ調のキャラクターイラスト。
+      動きのある構図（斜め配置、飛び出し効果）。吹き出しや効果線も可。
+    - スタイルD: ダーク背景に金属質感またはガラス質感のモチーフ。
+      写実的な光の反射、グラデーション、立体感。高級時計の広告のような洗練さ。
+    - スタイルE: イラスト＋テキストバナーの組み合わせ。
+      リボン状のテキスト帯、角丸の情報カード、親しみやすいアイコン群。}
+  Lighting: {「右上からの柔らかい自然光」「左下からのスポットライト」等の具体的な光源指示}
+  Texture: {「マット仕上げ」「光沢感」「紙のようなテクスチャ」等}
+  Clean composition, soft shadows for subtle depth and premium feel.
+  No watermarks, no logos, no ISBN, no decorative borders.
 
 style: |
-  Professional Japanese book cover design.
-  Mood: {ジャンルに応じたムードキーワード（例: 信頼感, 洗練された, 親しみやすい）}.
+  Professional Japanese Kindle book cover design.
+  Quality level: Amazon Kindle ベストセラーTOP10に並ぶ商業品質.
+  Mood: {ジャンル固有のムード3-4語: 例「信頼感, 洗練された, 知的, 温かみ」}.
+  Must look polished and premium when displayed as a small thumbnail (120x180px).
   High resolution 4K, print-ready, 1600x2560px, 300DPI.
   Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
 ```
+
+### 表紙プロンプト品質チェックリスト（生成前に必ず確認）
+
+生成するYAMLプロンプトが以下を満たしているか確認してから★確認3で提示する:
+
+- [ ] subject: 具体的なシーン/モチーフが描写されている（「professional design」のような曖昧な指示ではない）
+- [ ] layout: 3セクションの比率とモチーフの配置が明示されている
+- [ ] typography: タイトル・サブタイトルが実際の日本語で記述されている
+- [ ] typography: フォントサイズ・ウェイト・色・影が指定されている
+- [ ] visuals: 4色のHEXコードが明記されている
+- [ ] visuals: スタイル別のビジュアル指示が具体的（スタイルA〜Eのどれか）
+- [ ] visuals: 光源・質感の指示がある
+- [ ] style: ムードキーワードが3語以上ある
+- [ ] 著者名・ISBN・ロゴ・バーコードの除外指示がある
 
 ### ユーザーに提示する内容
 
@@ -847,132 +899,246 @@ A+画像は表紙と同じカラーパレットを使用し、ブランドの統
 
 - サイズ: **970×600px**（Amazon A+コンテンツ標準）
 - PASONA法則に沿った4枚構成（問題提起→煽り・共感→解決策→CTA）
-- 表紙と同じカラーパレットを使用
-- 画像内に日本語テキスト（見出し・キャッチコピー）を含める
+- 表紙と同じカラーパレットを使用し、**4枚を通してブランドの統一感を出す**
+- **各画像に日本語キャッチコピーを大きく配置する**（テキストなしの風景写真は禁止）
 - 各画像は独立してもストーリーが伝わるビジュアル
-- ラベル文字（「問題提起」等）は画像内に入れない
+- ラベル文字（「問題提起」等の構成名）は画像内に入れない
+- **4枚をスクロールしたとき、色のトーンがProblem(暗)→Agitation(赤/警告)→Solution(明)→CTA(活力)とグラデーション変化するように設計する**
+
+### A+キャッチコピー生成ルール
+
+各画像のキャッチコピーは以下の基準で生成する:
+- **8〜15文字**（一目で読める長さ）
+- 読者の感情を動かす言葉を選ぶ
+- 4枚でストーリーが完結する（問題→危機→解決→行動）
+- テーマと書籍タイトルに直結する具体的な表現
 
 ### 各画像の5ブロックYAMLプロンプト
+
+**プロンプト品質の絶対ルール:**
+- scene/layout/visuals は「具体的なシーン・人物・オブジェクト」で描写すること
+- 「professional」「high quality」のような**曖昧な形容詞だけの指示は禁止**
+- 必ず「誰が」「どこで」「何をしている」「どんな表情で」を含めること
 
 #### aplus_1.png（問題提起 — Problem）
 
 ```yaml
 subject: |
-  Amazon A+ content banner. Problem/pain visualization.
-  Scene: {テーマに関連する読者の悩みや問題状況を具体的に描写}.
-  Japanese headline text: "{問題を端的に表すキャッチコピー}"
+  Amazon A+ content banner showing a reader's pain point.
+  Concrete scene: {テーマ固有の悩みを具体的なシーンで描写。
+  例（睡眠本）: 「深夜2時、暗い寝室でスマホの青白い光に照らされた疲れた表情の30代男性。
+  ベッドに横たわりながら目が冴えて眠れない。枕元に散らかった書類とコーヒーカップ」
+  例（営業本）: 「会議室で顧客に提案中、沈黙が続き額に汗をかく若手営業マン。
+  テーブルの向こうで腕を組む厳しい表情のクライアント」}
+  Japanese headline: 「{8-15文字のキャッチコピー}」
 
 layout: |
   Wide landscape banner 970x600px.
-  Left 60%: emotional scene of the problem (person struggling, frustrated, exhausted).
-  Right 40%: dark overlay with Japanese headline text in white bold.
-  Bottom edge: subtle gradient to dark.
+  Split composition:
+  - Left 55%: 上記のシーンをリアルに描写（人物の表情が見える距離感）
+  - Right 45%: ダーク半透明オーバーレイ（opacity 70%）の上に日本語キャッチコピー
+  - キャッチコピーは右エリアの中央に配置、上下に十分な余白
+  - 画像全体の下端: {メインカラー}の細いライン（3px）でブランド統一
 
 typography: |
-  Headline "{キャッチコピー}" — 36pt, bold Japanese sans-serif, #FFFFFF white.
-  Sub-text "{補足1行}" — 18pt, Japanese sans-serif, {アクセントカラー}.
-  All Japanese text MUST be displayed exactly as written.
+  Headline 「{キャッチコピー}」
+    — Size: 右エリア幅の70%を占める大きさ
+    — Weight: Extra Bold
+    — Font: Japanese sans-serif
+    — Color: #FFFFFF (white)
+    — Shadow: 2px drop shadow, rgba(0,0,0,0.5)
+  Sub-text 「{補足1行: 問題の具体的な数字や状況}」
+    — Size: Headlineの40%
+    — Weight: Regular
+    — Color: {アクセントカラー}
+  All Japanese text MUST be rendered in actual Japanese characters, crisp and legible.
 
 visuals: |
-  Color palette: dark muted tones — {メインカラー暗め}, {サブカラー}, {背景ダーク}.
-  Emotional, relatable scene. Soft shadows, cinematic lighting.
-  NO composition labels, NO text like "問題提起", NO watermarks.
+  Color palette: Problem tone (暗く重い)
+    Primary: {メインカラー} darkened 30%
+    Secondary: {サブカラー} desaturated
+    Background: #1a1a2e to #16213e gradient
+    Accent: {アクセントカラー} for sub-text only
+  Lighting: 画面左上からの弱い間接光。人物の顔に影。全体的にローキー。
+  Texture: わずかなフィルムグレイン（映画的な質感）
+  Emotion: 「あ、これ自分のことだ」と読者が感じるリアルさ
+  NO composition labels (no text like "問題提起"), NO watermarks, NO logos.
 
 style: |
-  Professional advertising banner. Modern illustration or soft photorealistic style.
-  Mood: 切実感, 共感, リアル.
-  High resolution 4K, 970x600px. Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
+  Cinematic advertising banner. Photorealistic illustration style.
+  Reference mood: Netflix映画のキービジュアルのような映画的構図と光.
+  Mood: 切実感, 共感, リアルさ, 静かな緊張.
+  High resolution 4K, 970x600px.
+  Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
 ```
 
 #### aplus_2.png（煽り・共感 — Agitation）
 
 ```yaml
 subject: |
-  Amazon A+ content banner. Agitation/empathy visualization.
-  Scene: {問題が深刻化した状況、このまま放置するとどうなるかを描写}.
-  Japanese headline text: "{危機感を煽るキャッチコピー}"
+  Amazon A+ content banner amplifying the reader's urgency.
+  Concrete scene: {問題を放置した結果の深刻な状況を描写。
+  例（睡眠本）: 「重要な会議中に居眠りしそうになる疲労困憊のビジネスマン。
+  周囲の同僚の冷たい視線。PCに映るグラフは右肩下がり」
+  例（営業本）: 「空っぽのオフィスで一人残業。デスクにはゼロの営業成績表。
+  窓の外は暗く、同期が笑顔で退社していく後ろ姿」}
+  Japanese headline: 「{危機感を煽る8-15文字キャッチコピー}」
 
 layout: |
   Wide landscape banner 970x600px.
-  Full-width dramatic scene with text overlay.
-  Center: Japanese headline in large bold text with semi-transparent dark background band.
-  Diagonal or radial composition for visual tension.
+  Full-bleed dramatic composition:
+  - 全面にシーンを配置（人物は画面の1/3以上を占める）
+  - 中央やや上に日本語ヘッドラインを重ねる
+  - ヘッドライン背景: 横幅100%の半透明ダークバンド（height 120px, opacity 80%）
+  - 対角線構図またはダッチアングル（視覚的な不安定さを演出）
+  - 下端: {アクセントカラー}の細いライン（3px）
 
 typography: |
-  Headline "{キャッチコピー}" — 40pt, bold Japanese sans-serif, #FFFFFF or {アクセントカラー}.
-  All Japanese text MUST be displayed exactly as written.
+  Headline 「{キャッチコピー}」
+    — Size: バンド幅の60%を占める
+    — Weight: Extra Bold
+    — Font: Japanese sans-serif
+    — Color: {アクセントカラー} or #FFFFFF
+    — Letter-spacing: slightly wide for emphasis
+  All Japanese text in actual Japanese characters, perfectly legible.
 
 visuals: |
-  Color palette: dramatic contrast — {アクセントカラー}, {メインカラー深め}, black.
-  Intense, urgent atmosphere. Strong shadows, high contrast lighting.
+  Color palette: Agitation tone (赤みがかった警告色)
+    Primary: {アクセントカラー} at 80% saturation
+    Secondary: {メインカラー} darkened 40%
+    Background: deep navy to black gradient
+    Warning: subtle red/orange tint in shadows
+  Lighting: 強いコントラスト。ハイライトとシャドウの差を極端に。
+  右上から強い単一光源（スポットライト的）。
+  Texture: ハイコントラスト、ドラマチック
+  Emotion: 「このままではまずい」という切迫感
   NO composition labels, NO watermarks.
 
 style: |
-  Professional banner with strong emotional impact. Cinematic visual tension.
-  Mood: 緊張感, 危機感, 訴求力.
-  High resolution 4K, 970x600px. Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
+  High-impact advertising banner. Dramatic cinematic style.
+  Reference mood: 映画予告編の最もテンションが上がるカットのような緊張感.
+  Mood: 危機感, 焦燥, 緊張, 訴求力.
+  High resolution 4K, 970x600px.
+  Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
 ```
 
 #### aplus_3.png（解決策 — Solution）
 
 ```yaml
 subject: |
-  Amazon A+ content banner. Solution/transformation visualization.
-  Scene: {本書の解決策を実践した後の明るい変化、改善された状況を描写}.
-  Japanese headline text: "{解決策を示すキャッチコピー}"
+  Amazon A+ content banner showing the transformation after applying the book's solution.
+  Concrete scene: {本書の解決策を実践した後の明るい変化を描写。
+  例（睡眠本）: 「朝日が差し込む明るい寝室で、すっきりと目覚めた笑顔の30代男性。
+  窓の外は青空。ベッドは整えられ、サイドテーブルに本とコップの水」
+  例（営業本）: 「笑顔で握手を交わす営業マンとクライアント。
+  テーブルには契約書。窓から明るい光が差し込む。自信に満ちた表情」}
+  Japanese headline: 「{解決策を示す8-15文字キャッチコピー}」
 
 layout: |
   Wide landscape banner 970x600px.
-  Left 40%: Japanese headline text on clean bright background.
-  Right 60%: bright, aspirational scene showing positive transformation.
-  Upward diagonal composition suggesting growth and hope.
+  Bright, open composition:
+  - Left 35%: クリーンな{背景色}エリアに日本語ヘッドラインを配置
+  - Right 65%: 明るく希望に満ちたシーン（人物の笑顔が見える）
+  - 右上方向への対角線構図（上昇・成長を暗示）
+  - 下端: {メインカラー}の細いライン（3px）
 
 typography: |
-  Headline "{キャッチコピー}" — 36pt, bold Japanese sans-serif, {メインカラー}.
-  Sub-text "{本書のベネフィット1行}" — 18pt, Japanese sans-serif, {サブカラー}.
-  All Japanese text MUST be displayed exactly as written.
+  Headline 「{キャッチコピー}」
+    — Size: 左エリアの中央に大きく
+    — Weight: Bold
+    — Font: Japanese sans-serif
+    — Color: {メインカラー}
+  Sub-text 「{本書のベネフィットを1行で}」
+    — Size: Headlineの35%
+    — Weight: Regular
+    — Color: {サブカラー}
+  All Japanese text in actual Japanese characters, crisp and clean.
 
 visuals: |
-  Color palette: bright optimistic — {メインカラー明るめ}, {サブカラー}, {背景ライト}, white.
-  Fresh, vivid, hopeful atmosphere. Morning light, clean aesthetic.
+  Color palette: Solution tone (明るく温かい)
+    Primary: {メインカラー} at full brightness
+    Secondary: {サブカラー} lightened 20%
+    Background: {背景色} or white
+    Highlight: {アクセントカラー} for subtle accents only
+  Lighting: 右上からの温かい朝日のような自然光。全体的にハイキー。
+  ソフトシャドウ、柔らかいハイライト。
+  Texture: クリーンで爽やか。マット仕上げ。
+  Emotion: 「こうなれるなら読みたい」という希望と期待
   NO composition labels, NO watermarks.
 
 style: |
-  Professional banner with aspirational mood. Clean modern design.
-  Mood: 希望, 爽快感, 達成感.
-  High resolution 4K, 970x600px. Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
+  Aspirational advertising banner. Clean modern style with warmth.
+  Reference mood: Apple製品広告のようなクリーンさ + 人物の温かみ.
+  Mood: 希望, 爽快感, 達成感, 自信.
+  High resolution 4K, 970x600px.
+  Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
 ```
 
 #### aplus_4.png（CTA — Call to Action）
 
 ```yaml
 subject: |
-  Amazon A+ content banner. Call-to-action visualization.
-  Scene: {本書を手に取り、読み始める瞬間。読書体験の魅力を描写}.
-  Japanese headline text: "{行動を促すキャッチコピー}"
+  Amazon A+ content banner with strong call-to-action.
+  Concrete scene: {本書そのものを魅力的に見せる。
+  「木目のデスクの上に表紙が見えるKindle端末。横にコーヒーとノート。
+  画面には本書の表紙デザイン（実際の色合い・構成を再現）。
+  背景はソフトボケの温かい光」}
+  Japanese headline: 「{行動を促す8-15文字キャッチコピー}」
+  Japanese CTA: 「今すぐ読み始める」
 
 layout: |
   Wide landscape banner 970x600px.
-  Center: book mockup or reading device with the cover visible.
-  Background: soft bokeh or gradient in brand colors.
-  Bottom: CTA text with accent color underline or button-style highlight.
+  Product-hero composition:
+  - Center: 本書のモックアップ（表紙デザインの色合いとスタイルを再現した書籍/Kindle）
+    — 画面の40%を占める存在感
+    — やや傾けて立体感を出す（15度程度の角度）
+  - 上部: 日本語ヘッドラインキャッチコピー
+  - 下部: CTAテキスト「今すぐ読み始める」を{アクセントカラー}のボタン風デザインで配置
+    — 角丸矩形の背景 + 白文字、またはアンダーライン付き
+  - 背景: ソフトボケのグラデーション（表紙カラーパレットから）
 
 typography: |
-  Headline "{キャッチコピー}" — 40pt, bold Japanese sans-serif, {メインカラー}.
-  CTA text "今すぐ読み始める" — 24pt, bold, {アクセントカラー}, with underline or highlight.
-  All Japanese text MUST be displayed exactly as written.
+  Headline 「{キャッチコピー}」
+    — Size: 画面幅の50%
+    — Weight: Bold
+    — Font: Japanese sans-serif
+    — Color: {メインカラー}
+  CTA 「今すぐ読み始める」
+    — Size: Headlineの50%
+    — Weight: Bold
+    — Color: #FFFFFF on {アクセントカラー} button background
+    — Button: 角丸矩形 (border-radius 8px), padding 12px 32px
+  All Japanese text in actual Japanese characters.
 
 visuals: |
-  Color palette: energetic — {アクセントカラー}, {メインカラー}, {背景色}, white.
-  Book cover prominently featured. Inviting, action-oriented composition.
-  Soft glow or spotlight effect on the book.
+  Color palette: CTA tone (活力・行動)
+    Primary: {アクセントカラー} at full saturation (CTAボタン)
+    Secondary: {メインカラー} (ヘッドライン)
+    Background: {背景色} to white soft gradient
+    Glow: 書籍モックアップの周囲にソフトグロー（{アクセントカラー} at 20% opacity）
+  Lighting: 正面やや上からの均一な光。商品撮影スタジオのような照明。
+  書籍モックアップにスポットライト効果。
+  Texture: ポリッシュドでプレミアム。ガラスのような反射。
+  Emotion: 「今すぐクリックしたい」という行動意欲
   NO composition labels, NO watermarks.
 
 style: |
-  Professional banner with call-to-action focus. Premium product presentation.
-  Mood: 期待感, 行動意欲, ワクワク.
-  High resolution 4K, 970x600px. Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
+  Premium product hero banner. E-commerce conversion-optimized.
+  Reference mood: Apple Store製品ページ or Amazon商品ヒーローバナー.
+  Mood: 期待感, 行動意欲, プレミアム感, ワクワク.
+  High resolution 4K, 970x600px.
+  Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
 ```
+
+### A+プロンプト品質チェックリスト（生成前に必ず確認）
+
+- [ ] 4枚すべてのsubjectに「具体的な人物・場所・状況・表情」が描写されている
+- [ ] 4枚の色トーンがProblem(暗)→Agitation(赤/警告)→Solution(明)→CTA(活力)のグラデーションになっている
+- [ ] 全画像にtypographyブロックで日本語キャッチコピー（8-15文字）が指定されている
+- [ ] キャッチコピー4つでPASONAストーリーが完結している
+- [ ] 各visuals に具体的な光源・質感・感情の指示がある
+- [ ] 表紙と同じカラーパレット（4色HEXコード）が使用されている
+- [ ] 「professional」「high quality」のような曖昧な指示だけで終わっていない
 
 ### ユーザーに提示する内容
 
