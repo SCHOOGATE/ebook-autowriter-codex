@@ -16,20 +16,20 @@ def validate(slug_dir):
     with open(path, encoding="utf-8") as f:
         content = f.read()
 
-    # タイトルチェック
-    title_match = re.search(r"タイトル[：:]\s*(.+)", content)
+    # Title check (accepts Japanese or English labels, with or without bold markdown)
+    title_match = re.search(r"(?:\*{0,2})(?:タイトル|[Tt]itle)(?:\*{0,2})[：:]\s*(.+)", content)
     if not title_match or len(title_match.group(1).strip()) < 3:
-        errors.append("タイトルが未設定または短すぎます")
+        errors.append("title missing or too short")
 
-    # サブタイトルチェック
-    sub_match = re.search(r"サブタイトル[：:]\s*(.+)", content)
+    # Subtitle check
+    sub_match = re.search(r"(?:\*{0,2})(?:サブタイトル|[Ss]ubtitle)(?:\*{0,2})[：:]\s*(.+)", content)
     if not sub_match or len(sub_match.group(1).strip()) < 3:
-        errors.append("サブタイトルが未設定または短すぎます")
+        errors.append("subtitle missing or too short")
 
-    # 著者名チェック
-    author_match = re.search(r"著者名[：:]\s*(.+)", content)
+    # Author check
+    author_match = re.search(r"(?:\*{0,2})(?:著者名|[Aa]uthor)(?:\*{0,2})[：:]\s*(.+)", content)
     if not author_match or len(author_match.group(1).strip()) < 1:
-        errors.append("著者名が未設定です（空欄不可）")
+        errors.append("author missing")
 
     # 文字化け・不正バイト列検出
     # Shift-JIS mojibake patterns (e.g. 繧ｿ繧､繝医Ν)

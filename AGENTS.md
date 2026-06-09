@@ -43,6 +43,8 @@
 10. 画像はPNG/JPGのまま output/{slug}/images/ に直接保存する（変換不要）
 11. 表紙画像はJPG形式で出力する（KDP申請可能＋ファイルサイズ削減）
 12. 画像生成後はPillowで正しいサイズにリサイズする（表紙1600x2560 / A+970x600）
+13. ファイル内容の確認にPowerShellの Get-Content や type コマンドを絶対に使わない（Windows環境ではcp932で読むため日本語が文字化けし、正常なファイルを壊す原因になる）。ファイル確認は必ず python scripts/validate_*.py または python -c "print(open(path, encoding='utf-8').read())" で行う
+14. Get-Content の文字化け表示を見て「ファイルが壊れている」「互換ラベルが必要」と判断してファイルを修正する行為は絶対禁止。validateスクリプトがPASSしていればファイルは正常
 ```
 
 ## リトライ時の絶対ルール
