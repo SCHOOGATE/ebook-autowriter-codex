@@ -1,0 +1,140 @@
+【A+コンテンツ画像プロンプト】4枚 / 各970×600px
+
+共通ルール:
+- Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
+- Output one horizontal Kindle A+ content image.
+- Final target after post-processing: 970x600px.
+- Use clear, accurate Japanese text only where specified.
+- Do not add unreadable small Japanese text, watermarks, logos, QR codes, or book mockup covers.
+- Keep the palette consistent with the cover: deep green #0F3D2E, charcoal #111111, warm orange #E85D2A, off-white #F7F9F6.
+
+---
+
+image_id: aplus_1.png
+role: 問題提起
+catch_copy: 翌朝がつらい
+prompt: |
+  Create a Japanese Kindle A+ content image for gym beginners who suffer from muscle soreness after exercise.
+
+  subject:
+    A beginner sitting on the edge of a bed in the morning, gently holding sore thighs, with gym shoes, towel, and water bottle nearby.
+    The scene should communicate "I trained yesterday, and this morning hurts" without looking like a medical emergency.
+
+  layout:
+    970x600 horizontal banner.
+    Large Japanese headline on the left: "翌朝がつらい"
+    Visual scene on the right.
+    Clean commercial Kindle A+ layout, not a book cover.
+
+  typography:
+    Use clear, accurate Japanese text.
+    Headline must be large, readable, and exactly: "翌朝がつらい"
+    Do not add any other Japanese text.
+
+  visuals:
+    Calm morning light, realistic but polished illustration.
+    Beginner-friendly, trustworthy, and easy to understand.
+    Include subtle gym-related objects: towel, water bottle, sneakers.
+
+  style:
+    Same visual tone as the cover: clean, modern, deep green and white base with small warm orange accents.
+    Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
+
+---
+
+image_id: aplus_2.png
+role: 煽り・共感
+catch_copy: その痛み、危険かも
+prompt: |
+  Create a Japanese Kindle A+ content image showing common beginner mistakes that make muscle soreness worse.
+
+  subject:
+    A worried gym beginner looking at a calendar packed with workouts while feeling leg soreness.
+    Communicate the risk of pushing through pain, poor sleep, and skipping recovery.
+
+  layout:
+    970x600 horizontal banner.
+    Large Japanese headline centered: "その痛み、危険かも"
+    Add three simple visual cues around the scene: overtraining, poor sleep, skipping recovery.
+    Keep the layout clean and readable.
+
+  typography:
+    Use clear, accurate Japanese text.
+    Headline must be exactly: "その痛み、危険かも"
+    Do not add extra small unreadable Japanese text.
+
+  visuals:
+    Slight warning mood, but not scary.
+    Use red-orange accent for warning marks.
+    Avoid injury photos, hospital imagery, blood, or dramatic pain scenes.
+
+  style:
+    Commercial Kindle A+ image.
+    Keep consistent with the cover palette, with stronger warning accent.
+    Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
+
+---
+
+image_id: aplus_3.png
+role: 解決策
+catch_copy: 72時間で整える
+prompt: |
+  Create a Japanese Kindle A+ content image explaining a simple recovery flow for gym beginners.
+
+  subject:
+    A calm recovery routine after exercise: hydration, light movement, sleep, and next workout adjustment.
+    Show the idea that soreness care can be planned over the first 72 hours.
+
+  layout:
+    970x600 horizontal banner.
+    Large Japanese headline at the top: "72時間で整える"
+    Below it, show four clean illustrated steps connected by a simple line.
+    The steps should be visual icons or scenes, not text-heavy labels.
+
+  typography:
+    Use clear, accurate Japanese text.
+    Headline must be exactly: "72時間で整える"
+    Avoid cluttered labels and small text.
+
+  visuals:
+    Bright, hopeful atmosphere.
+    Include water bottle, gentle stretching, sleep symbol, and workout notebook.
+    The image should feel practical, calm, and beginner-friendly.
+
+  style:
+    Clean instructional A+ image.
+    Same deep green and white palette as the cover, with warm orange highlights.
+    Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
+
+---
+
+image_id: aplus_4.png
+role: CTA
+catch_copy: 今日から回復上手
+prompt: |
+  Create a Japanese Kindle A+ content image encouraging beginners to start a sustainable soreness-care habit.
+
+  subject:
+    A confident beginner leaving the gym with relaxed posture, holding a small recovery log notebook.
+    Communicate that the reader can train, recover, and continue without disrupting work or daily life.
+
+  layout:
+    970x600 horizontal banner.
+    Large Japanese headline on the right: "今日から回復上手"
+    Positive action-focused visual on the left.
+    Clean promotional layout suitable for Kindle A+ content.
+
+  typography:
+    Use clear, accurate Japanese text.
+    Headline must be exactly: "今日から回復上手"
+    Do not add any other Japanese text.
+
+  visuals:
+    Clean gym entrance or bright home training corner.
+    Show confidence, lightness, and a sustainable routine.
+    No before-after body transformation and no exaggerated fitness model body.
+
+  style:
+    Trustworthy, modern Kindle A+ promotional image.
+    Match the cover design language and color palette.
+    Use the ChatGPT Images 2.0 (4o) model. Do NOT use DALL-E.
