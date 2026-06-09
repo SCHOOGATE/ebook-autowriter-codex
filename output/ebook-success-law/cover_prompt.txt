@@ -1,0 +1,37 @@
+model: ChatGPT Images 2.0
+output:
+  format: jpg
+  size: 1600x2560
+  save_path: output/ebook-success-law/images/cover.jpg
+
+subject: |
+  Create a professional Japanese Kindle business book cover for the title "2026年最新版 電子書籍の成功法則" and subtitle "AI時代のKindle出版で選ばれる本の作り方" by DaiGo.
+  The subject is practical Kindle self-publishing success in the AI era: planning, writing, cover, listing, launch, and post-launch improvement.
+  The cover should communicate trust, clarity, modern digital publishing, and a realistic step-by-step business guide rather than a flashy get-rich-quick product.
+
+layout: |
+  Portrait Kindle cover, 1600x2560 pixels, clean commercial layout with strong first-glance readability on a small Amazon thumbnail.
+  Top area: small badge text "2026年最新版".
+  Center area: large main title "電子書籍の成功法則" with "2026年最新版" visually connected but not overpowering.
+  Under title: subtitle "AI時代のKindle出版で選ばれる本の作り方".
+  Bottom area: author name "DaiGo".
+  Include a subtle visual path from manuscript pages to a Kindle-like tablet screen and then to an upward analytics line, suggesting planning to publication to improvement.
+
+typography: |
+  Use crisp Japanese typography, high contrast, no tiny decorative text, no fake unreadable glyphs.
+  Main title must be the dominant element and readable at thumbnail size.
+  Subtitle should be smaller but still clear.
+  Author name DaiGo should be placed calmly at the bottom.
+  Avoid overly playful fonts; use a modern Gothic or Mincho-inspired business book style.
+
+visuals: |
+  Use a realistic, polished digital publishing desk scene with a tablet, manuscript sheets, simple UI cards, and a clean analytics graph.
+  Add tasteful AI-era cues such as soft circuit lines or a small abstract neural network pattern, but keep them restrained.
+  Do not include people, faces, hands, random English text, QR codes, logos, or brand marks.
+  The book should look like a serious Japanese non-fiction Kindle guide for beginners and intermediate self-publishers.
+
+style: |
+  Modern Japanese business book design, bright but not loud, white and deep navy base with accents of fresh green and warm yellow.
+  Professional, practical, trustworthy, and current for 2026.
+  No clutter, no dark stock-photo look, no cheap money imagery, no coins, no luxury symbols, no exaggerated income claims.
+  Leave safe margins around all text so it will survive Kindle thumbnail cropping.
