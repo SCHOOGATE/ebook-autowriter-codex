@@ -1297,13 +1297,25 @@ python scripts/validate_cover_prompt.py output/{slug}
 - KDP申請にそのまま使える形式にする
 - 画像ファイルは直接コミットしない（validate_images.pyが自動Base64化＋削除する）
 
-### Phase 6 完了時の検証（必須）
+### Phase 6 完了時のリサイズ＋検証（必須）
+
+**ChatGPT Images 2.0はプロンプトのサイズ指示（1600x2560px）を正確に守らない。** 生成後に必ずリサイズする。
 
 ```bash
+# リサイズ（1600x2560）
+python -c "
+from PIL import Image
+img = Image.open('output/{slug}/images/cover.jpg')
+img = img.resize((1600, 2560), Image.LANCZOS)
+img.save('output/{slug}/images/cover.jpg', quality=95)
+print(f'Resized cover.jpg to 1600x2560 (was {img.size})')
+"
+
+# 検証（リサイズ後に実行）
 python scripts/validate_images.py output/{slug} cover
 ```
 
-**検証基準:** cover.jpg/png が存在し、ファイルサイズが50KB以上
+**検証基準:** cover.jpg/png が存在し、ファイルサイズが50KB以上、解像度1000x1500以上
 
 ---
 
@@ -1609,9 +1621,23 @@ style: |
 **★確認5 で承認されたプロンプトで画像を生成する。**
 生成手順は後述「ChatGPT Images 2.0 生成プロトコル」に従う。
 
-### Phase 7 完了時の検証（必須）
+### Phase 7 完了時のリサイズ＋検証（必須）
+
+**ChatGPT Images 2.0はプロンプトのサイズ指示（970x600px）を正確に守らない。** 生成後に必ずリサイズする。
 
 ```bash
+# リサイズ（970x600）
+python -c "
+from PIL import Image
+for i in range(1, 5):
+    path = f'output/{slug}/images/aplus_{i}.png'
+    img = Image.open(path)
+    img = img.resize((970, 600), Image.LANCZOS)
+    img.save(path)
+    print(f'Resized aplus_{i}.png to 970x600')
+"
+
+# 検証（リサイズ後に実行）
 python scripts/validate_images.py output/{slug} aplus
 ```
 
@@ -1674,9 +1700,46 @@ Phase 6/7 で `validate_images.py` を実行すれば、追加の手順は不要
 8. binaries/*.b64 — 表紙画像・A+画像（Base64エンコード済み）
 9. binaries/manifest.json — 復元用マッピング
 
-※ PRマージ後、ローカルで以下を実行して画像を復元してください:
-  python scripts/decode_binaries.py output/{slug}
+※ 画像の復元・リサイズは自動で実行済みです（下記参照）。
 ```
+
+**★確認7の直後に自動実行する処理（省略不可）:**
+
+```bash
+# Step 1: Base64から画像を復元
+python scripts/decode_binaries.py output/{slug}
+
+# Step 2: 画像を正しいサイズにリサイズ
+# ChatGPT Images 2.0は指定サイズを正確に守らないため、生成後のリサイズが必須
+python -c "
+from PIL import Image
+import os
+
+img_dir = 'output/{slug}/images'
+
+# 表紙: 1600x2560
+cover = os.path.join(img_dir, 'cover.jpg')
+if os.path.exists(cover):
+    img = Image.open(cover)
+    img = img.resize((1600, 2560), Image.LANCZOS)
+    img.save(cover, quality=95)
+    print(f'Resized cover.jpg to 1600x2560')
+
+# A+: 970x600
+for i in range(1, 5):
+    ap = os.path.join(img_dir, f'aplus_{i}.png')
+    if os.path.exists(ap):
+        img = Image.open(ap)
+        img = img.resize((970, 600), Image.LANCZOS)
+        img.save(ap)
+        print(f'Resized aplus_{i}.png to 970x600')
+"
+
+# Step 3: リサイズ後のサイズを確認
+python scripts/validate_images.py output/{slug} all
+```
+
+**Pillow（PIL）がない場合:** `pip install Pillow` を実行する。Codex環境ではsetup.shでインストール済み。
 
 ---
 
