@@ -321,7 +321,7 @@ dir
 1. コマンドプロンプトで以下を入力して Enter:
 
 ```
-codex mcp add chrome-devtools -- npx -y @anthropic-ai/chrome-devtools-mcp@latest
+codex mcp add chrome-devtools -- npx -y chrome-devtools-mcp@latest
 ```
 
 2. **「Added global MCP server 'chrome-devtools'.」** と表示されれば成功です

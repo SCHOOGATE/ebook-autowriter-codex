@@ -14,7 +14,7 @@ if [ -f "$CODEX_CONFIG" ]; then
         echo '' >> "$CODEX_CONFIG"
         echo '[mcp_servers.chrome-devtools]' >> "$CODEX_CONFIG"
         echo 'command = "npx"' >> "$CODEX_CONFIG"
-        echo 'args = ["-y", "@anthropic-ai/chrome-devtools-mcp@latest"]' >> "$CODEX_CONFIG"
+        echo 'args = ["-y", "chrome-devtools-mcp@latest"]' >> "$CODEX_CONFIG"
         echo "Chrome DevTools MCP added to config.toml (default port 9222)"
     else
         echo "Chrome DevTools MCP already configured in config.toml"
