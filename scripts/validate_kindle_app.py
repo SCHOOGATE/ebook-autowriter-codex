@@ -26,9 +26,20 @@ def validate(slug_dir):
             errors.append(f"タイトル表記「{label}」が見つかりません")
 
     # 書籍説明文チェック（PASONA / 3,000〜4,000字）
-    desc_match = re.search(r"(?:書籍説明文|4\.\s*書籍説明文).*?(?=------|\d+\.\s|\Z)", content, re.DOTALL)
+    # v4.5: Handle both formats (with/without separator lines)
+    # Format A: "4. 書籍説明文...\n------\ncontent\n------\n5."
+    desc_match = re.search(
+        r"(?:4\.\s*書籍説明文|書籍説明文)[^\n]*\n-{5,}\n(.*?)(?=\n-{5,}|\Z)",
+        content, re.DOTALL
+    )
+    if not desc_match:
+        # Format B: "4. 書籍説明文\n<p>content</p>\n\n5."
+        desc_match = re.search(
+            r"(?:4\.\s*書籍説明文|書籍説明文)[^\n]*\n(.*?)(?=\n\d+\.\s|\Z)",
+            content, re.DOTALL
+        )
     if desc_match:
-        desc_text = desc_match.group()
+        desc_text = desc_match.group(1) if desc_match.lastindex else desc_match.group()
         # HTMLタグを除去して文字数カウント
         plain_text = re.sub(r"<[^>]+>", "", desc_text)
         desc_chars = len(plain_text.strip())
@@ -50,10 +61,18 @@ def validate(slug_dir):
     else:
         errors.append("書籍説明文セクションが見つかりません")
 
-    # カテゴリチェック（5件）
-    cat_match = re.search(r"(?:カテゴリ|5\.\s*カテゴリ).*?(?=------|\d+\.\s*キーワード|\Z)", content, re.DOTALL)
+    # カテゴリチェック（5件）— v4.5: Handle both formats
+    cat_match = re.search(
+        r"(?:5\.\s*カテゴリ|カテゴリ)[^\n]*\n-{5,}\n(.*?)(?=\n-{5,}|\n\d+\.\s*キーワード|\Z)",
+        content, re.DOTALL
+    )
+    if not cat_match:
+        cat_match = re.search(
+            r"(?:5\.\s*カテゴリ|カテゴリ)[^\n]*\n(.*?)(?=\n\d+\.\s*キーワード|\Z)",
+            content, re.DOTALL
+        )
     if cat_match:
-        cat_text = cat_match.group()
+        cat_text = cat_match.group(1) if cat_match.lastindex else cat_match.group()
         cat_lines = re.findall(r"^\s*\d+\.", cat_text, re.MULTILINE)
         if len(cat_lines) < 5:
             errors.append(f"カテゴリ数不足: {len(cat_lines)} / 最低5件")

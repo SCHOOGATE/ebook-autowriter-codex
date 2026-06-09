@@ -25,15 +25,21 @@ def validate(slug_dir):
     if len(title_proposals) < 3:
         errors.append(f"タイトル提案数不足: {len(title_proposals)} / 最低3案")
 
-    # キーワード行チェック（7行）
-    kw_section = re.search(r"キーワード.*?(?=------|\Z)", content, re.DOTALL)
-    if kw_section:
-        kw_text = kw_section.group()
-        kw_lines = [l for l in kw_text.split("\n") if l.strip() and not l.startswith("-") and "キーワード" not in l and "----" not in l and "50文字" not in l]
-        if len(kw_lines) < 7:
-            errors.append(f"キーワード行数不足: {len(kw_lines)} / 最低7行")
+    # キーワード行チェック（7行）— v4.5: count "キーワードN（50文字以内）" headers
+    kw_headers = re.findall(r"^キーワード\d+（50文字以内）", content, re.MULTILINE)
+    if kw_headers:
+        if len(kw_headers) < 7:
+            errors.append(f"キーワード行数不足: {len(kw_headers)} / 最低7行")
     else:
-        errors.append("キーワードセクションが見つかりません")
+        # Fallback: find "キーワード（7つ）" section
+        kw_section = re.search(r"キーワード（7つ）.*?(?=======|\Z)", content, re.DOTALL)
+        if kw_section:
+            kw_text = kw_section.group()
+            kw_lines = [l for l in kw_text.split("\n") if l.strip() and not l.startswith("-") and "キーワード" not in l and "----" not in l and "50文字" not in l]
+            if len(kw_lines) < 7:
+                errors.append(f"キーワード行数不足: {len(kw_lines)} / 最低7行")
+        else:
+            errors.append("キーワードセクションが見つかりません")
 
     # 著者名チェック
     if "著者" not in content:

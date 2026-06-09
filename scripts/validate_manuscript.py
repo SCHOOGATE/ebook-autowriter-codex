@@ -151,13 +151,36 @@ FILLER_PATTERN = re.compile(
     r"(第\d章|はじめに|おわりに|第\d章:.+)の補足\d+では"
 )
 
+# v4.5: Additional filler patterns detected in eigo-kentei / suimin-busoku tests
+FILLER_PATTERNS_V45 = [
+    # Type 1: Chapter-opening template ("第X章の実践視点/学習場面/記録方法/行動設計")
+    re.compile(r"^第\d章の(実践視点|学習場面|記録方法|行動設計)\d"),
+    # Type 2: Subsection-title-insertion template ("{title}では...孤立した作業にせず")
+    re.compile(r"孤立した作業にせず"),
+    re.compile(r"今日の到達点を一つだけ決めてから始めます"),
+    re.compile(r"の結果を感覚で終わらせず"),
+    re.compile(r"の流れを使うと、短い勉強時間でも"),
+    # Original pattern
+    FILLER_PATTERN,
+]
+
+
+def _count_filler_lines(content):
+    """Count lines matching any known filler pattern."""
+    lines = content.split("\n")
+    filler_lines = []
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if any(pat.search(stripped) for pat in FILLER_PATTERNS_V45):
+            filler_lines.append(i + 1)
+    return filler_lines
+
 
 def check_template_filler(content):
-    """B-1: Detect template-style filler lines."""
-    lines = content.split("\n")
-    matched = [i + 1 for i, line in enumerate(lines) if FILLER_PATTERN.search(line)]
-    if matched:
-        return [f"template filler detected: {len(matched)} lines"]
+    """B-1: Detect template-style filler lines (v4.5 expanded)."""
+    filler_lines = _count_filler_lines(content)
+    if len(filler_lines) >= 4:
+        return [f"template filler detected: {len(filler_lines)} lines (threshold: 3)"]
     return []
 
 
@@ -168,15 +191,49 @@ def check_subsection_filler(content):
     i = 0
     while i < len(lines):
         if lines[i].startswith("### "):
-            # find next non-empty line
             j = i + 1
             while j < len(lines) and lines[j].strip() == "":
                 j += 1
-            if j < len(lines) and FILLER_PATTERN.search(lines[j]):
+            if j < len(lines) and any(
+                pat.search(lines[j].strip()) for pat in FILLER_PATTERNS_V45
+            ):
                 count += 1
         i += 1
     if count > 0:
         return [f"subsection heading followed by filler: {count} occurrences"]
+    return []
+
+
+def check_filler_excluded_total(content):
+    """B-6: Total char count after removing all filler lines must meet 25,000.
+
+    Uses the same counting as the main total_chars (len of full content)
+    minus the characters on filler lines (including their newlines).
+    Only triggers if filler lines were actually detected.
+    """
+    filler_line_nums = _count_filler_lines(content)
+    if not filler_line_nums:
+        return []  # No filler detected, skip this check
+    lines = content.split("\n")
+    filler_set = set(filler_line_nums)
+    # Rebuild content without filler lines and measure
+    real_content = "\n".join(
+        lines[i] for i in range(len(lines)) if (i + 1) not in filler_set
+    )
+    real_chars = len(real_content)
+    if real_chars < 25000:
+        return [
+            f"filler-excluded total chars: {real_chars} / min 25,000 "
+            f"({len(filler_set)} filler lines removed)"
+        ]
+    return []
+
+
+def check_excessive_blank_lines(content):
+    """B-7: Detect 3+ consecutive blank lines."""
+    runs = re.findall(r"\n{4,}", content)
+    if runs:
+        return [f"excessive blank lines: {len(runs)} runs of 3+ consecutive blanks"]
     return []
 
 
@@ -294,7 +351,7 @@ def validate(slug_dir):
     if style_ratio < 0.80:
         errors.append(f"です・ます調の一貫性不足: {style_ratio:.0%} / 最低80%")
 
-    # B-1: Template filler detection
+    # B-1: Template filler detection (v4.5 expanded)
     errors.extend(check_template_filler(content))
 
     # B-2: Subsection heading followed by filler
@@ -308,6 +365,12 @@ def validate(slug_dir):
 
     # B-5: Duplicate sentence detection (3+ identical, >=15 chars)
     errors.extend(check_duplicate_sentences(content))
+
+    # B-6: Filler-excluded total char count
+    errors.extend(check_filler_excluded_total(content))
+
+    # B-7: Excessive blank lines
+    errors.extend(check_excessive_blank_lines(content))
 
     if errors:
         print("FAIL: manuscript.md 検証エラー")
