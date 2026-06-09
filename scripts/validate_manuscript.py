@@ -387,6 +387,27 @@ def validate(slug_dir):
     # B-7: Excessive blank lines
     errors.extend(check_excessive_blank_lines(content))
 
+    # B-9: Third-person reader reference detection (v4.5)
+    # Count "読者は" as subject (AI-like third-person writing)
+    # Exclude headings (###) and meta-references like "読者像" "読者設定" "読者レビュー"
+    body_lines = [
+        line for line in content.split("\n")
+        if line.strip() and not line.strip().startswith("#")
+    ]
+    body_text = "\n".join(body_lines)
+    # Remove meta-context uses: 読者像/読者設定/読者層/読者レビュー/読者の声
+    cleaned = re.sub(r"読者[像設層]|読者レビュー|読者の声|読者ワーク", "", body_text)
+    reader_as_subject = len(re.findall(r"読者[はがも]、|読者[はがも][^」]", cleaned))
+    if reader_as_subject >= 10:
+        errors.append(
+            f"third-person reader reference: 「読者は/が」{reader_as_subject}回検出 "
+            f"(上限9回) — 「あなた」で語りかけるか主語省略に修正"
+        )
+    elif reader_as_subject >= 3:
+        warnings.append(
+            f"WARN: 「読者は/が」{reader_as_subject}回検出 — プロの文章は読者を第三者として指さない"
+        )
+
     if errors:
         print("FAIL: manuscript.md 検証エラー")
         for e in errors:
