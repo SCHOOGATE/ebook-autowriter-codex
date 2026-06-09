@@ -16,7 +16,13 @@ def validate(slug_dir):
     with open(path, encoding="utf-8") as f:
         content = f.read()
 
+    # Encoding corruption detection (v4.5)
     char_count = len(content)
+    if char_count > 0 and content.count("?") / char_count > 0.3:
+        print("FAIL: listing.txt エンコーディング破損")
+        print(f"  - encoding corruption: file was written without UTF-8 encoding")
+        return 1
+
     if char_count < 3000:
         errors.append(f"総文字数不足: {char_count} / 最低3,000字")
 

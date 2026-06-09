@@ -63,6 +63,11 @@
 12. 画像生成後はPillowで正しいサイズにリサイズする（表紙1600x2560 / A+970x600）
 13. ファイル内容の確認にPowerShellの Get-Content や type コマンドを絶対に使わない（Windows環境ではcp932で読むため日本語が文字化けし、正常なファイルを壊す原因になる）。ファイル確認は必ず python scripts/validate_*.py または python -c "print(open(path, encoding='utf-8').read())" で行う
 14. Get-Content の文字化け表示を見て「ファイルが壊れている」「互換ラベルが必要」と判断してファイルを修正する行為は絶対禁止。validateスクリプトがPASSしていればファイルは正常
+15. 日本語を含むファイルの書き込みは必ず python scripts/write_utf8.py 経由で行うこと（★最重要★事故実績あり）。
+    Codex CLIの内蔵WriteツールやPython open() のencoding省略は、Windows環境でcp932を使用し日本語が全て????に置換される。
+    使い方: python scripts/write_utf8.py "output/{slug}/manuscript.md" で標準入力からコンテンツを受け取りUTF-8で書き込む。
+    または: python -c "import sys; open(sys.argv[1],'w',encoding='utf-8').write(sys.stdin.read())" "output/{slug}/manuscript.md"
+    事故実績: 2026-06-10 shingata-eiyou-shicchou テストで全出力ファイル（94%が????）が破損。research.md/book_meta.md以外の全ファイルが文字化け
 ```
 
 ## リトライ時の絶対ルール

@@ -316,7 +316,22 @@ def validate(slug_dir):
     with open(path, encoding="utf-8") as f:
         content = f.read()
 
+    # B-8: Encoding corruption detection (v4.5)
+    # Windows cp932 write without encoding='utf-8' replaces all Japanese chars with '?'
     total_chars = len(content)
+    if total_chars > 0:
+        q_ratio = content.count("?") / total_chars
+        if q_ratio > 0.3:
+            print("FAIL: manuscript.md エンコーディング破損")
+            print(
+                f"  - encoding corruption: {content.count('?')}/{total_chars} chars "
+                f"are '?' ({q_ratio:.0%}) — file was written without UTF-8 encoding"
+            )
+            print(
+                "  - 対処: ファイル書き込みに encoding='utf-8' を指定して再生成してください"
+            )
+            return 1
+
     if total_chars < 25000:
         errors.append(f"総文字数不足: {total_chars} / 最低25,000字")
 
