@@ -21,6 +21,7 @@ eBook AutoWriter for Codex の AGENTS.md（スキル定義）の変更履歴。
 | 8 | 定型フィラー3パターン検出 | 「視点を加えてください」が408箇所挿入されていた |
 | 9 | 節末定型ブロック禁止 | n-gram重複率55.9%の直接原因 |
 | 10 | Get-Content使用禁止 | cp932で読むため日本語が文字化け→Codexが誤判断 |
+| 11 | 画像プロンプトのUTF-8読み込み強制 | cover_prompt.txtを既定エンコーディングで読むと日本語が????に文字化けするため。Phase 6/7冒頭にPythonの `encoding='utf-8'` 読み込みを明記 |
 
 **コミット:** bef7f03, 8bbb8a1, bb3caa3, 1c48ffb, 7f0bce0, 1ab1fe3, d75c132, 9786f76
 

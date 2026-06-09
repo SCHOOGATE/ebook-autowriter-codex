@@ -1,10 +1,18 @@
 {
   "cover": {
     "path": "output/kinniku-tsu-taisaku/images/cover.jpg",
-    "source": "C:\\Users\\user\\.codex\\generated_images\\019eaa13-2e7f-7c12-98fd-24c9debc2784\\ig_0cf2fc7f0a7bba65016a277a28c8d48191b6581981d6aae420.png",
+    "source": "tmp/devtools-cover-candidates/candidate_text_priority.png",
+    "generation_method": "Chrome DevTools Protocol -> chatgpt.com -> ChatGPT Images 2.0 (4o)",
+    "prompt_source": "output/kinniku-tsu-taisaku/cover_prompt.txt (read with encoding=utf-8)",
+    "resize_method": "fit within 1600x2560 with white padding; no cropping",
     "width": 1600,
     "height": 2560,
-    "bytes": 565901,
-    "format": "jpg"
+    "bytes": 491899,
+    "format": "jpg",
+    "text_check": {
+      "title": "ジム初心者のための筋肉痛対策入門",
+      "subtitle": "翌日つらくならない運動後ケアの基本",
+      "author": "DaiGo"
+    }
   }
 }
