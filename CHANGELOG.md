@@ -55,9 +55,9 @@ eBook AutoWriter for Codex の AGENTS.md（スキル定義）の変更履歴。
 
 | # | 変更内容 |
 |---|---------|
-| F-1 | docs/setup-guide.md にGPT-5.5モデル選択手順を追加（Step 7-2） |
-| F-2 | README.md に前提条件・使い方でGPT-5.5選択を明記 |
-| F-3 | Googleドキュメント タブ1（セットアップガイド）・タブ2（更新履歴）を更新 |
+| F-1 | README.md に前提条件でGPT-5.5推奨を明記、使い方に `--model gpt-5.5` コマンド例追加 |
+| F-2 | Googleドキュメント タブ1（CLI版セットアップガイド）のcodexコマンドに `--model gpt-5.5` 追加 |
+| F-3 | Googleドキュメント タブ2（更新履歴）にv4.5追記 |
 
 ---
 

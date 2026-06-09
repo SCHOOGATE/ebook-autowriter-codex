@@ -83,9 +83,8 @@ pip install python-docx Pillow
 
 ### Codex での対話フロー
 
-1. Codex のチャット画面で **モデルを GPT-5.5 に変更**（入力欄下のモデル名をクリック → GPT-5.5 を選択）
-2. **「{テーマ}の電子書籍を制作」** と入力（例: 「AI副業の電子書籍を制作」）
-3. 著者名・参考資料（任意）を回答
+1. Codex CLI で **`--model gpt-5.5`** を指定して起動（例: `codex --model gpt-5.5 --dangerously-bypass-approvals-and-sandbox "AGENTS.mdの指示に従って「AI副業の電子書籍を制作」を開始してください。"`）
+2. 著者名・参考資料（任意）を回答
 3. 以下の7つのチェックポイント（★）で確認を求められます
 
 ```
