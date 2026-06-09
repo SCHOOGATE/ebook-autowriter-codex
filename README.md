@@ -1,6 +1,6 @@
 # eBook AutoWriter for Codex
 
-OpenAI Codex Cloud で **Kindle電子書籍（25,000字・5章構成）** を対話型で一括生成するワークフロー。
+Codex CLI で **Kindle電子書籍（25,000字・5章構成）** を対話型で一括生成するワークフロー。
 
 テーマを入力するだけで、リサーチ → 執筆 → メタデータ → 表紙 → A+画像 → Kindle申請データまで自動生成します。
 
@@ -30,7 +30,7 @@ OpenAI Codex Cloud で **Kindle電子書籍（25,000字・5章構成）** を対
 
 | 項目 | 詳細 |
 |------|------|
-| **OpenAI** | Plus プラン以上（$20/月〜。Codex Cloud 利用に必要）。**モデルは GPT-5.5 を選択してください** |
+| **OpenAI** | Plus プラン以上（$20/月〜）。**Codex CLI で `--model gpt-5.5` を指定して使用** |
 | **GitHub** | アカウント作成済み（リポジトリ接続に必要） |
 | **Python** | 3.8 以上 |
 | **pandoc** | DOCX変換に使用（ローカル後処理） |
@@ -43,30 +43,14 @@ OpenAI Codex Cloud で **Kindle電子書籍（25,000字・5章構成）** を対
 
 ### Step 1: OpenAI Plus 以上の契約
 
-1. [OpenAI](https://platform.openai.com/) にログイン
-2. Settings → Billing → **Plus プラン**（$20/月）以上に変更
-3. 左メニューの **Codex** が利用可能になったことを確認
+ChatGPT Plus（$20/月）以上の契約が必要です。Codex CLI のログインに使用します。
 
-> Plus（$20/月）でも Codex は利用可能です。Pro（$100/月）は5倍、Pro（$200/月）は20倍の利用枠があります。
+### Step 2: セットアップ
 
-### Step 2: GitHub リポジトリの準備
+詳細な手順は [導入手順書（docs/setup-guide.md）](docs/setup-guide.md) を参照してください。
+Node.js → Git → Python → Codex CLI → Chrome設定 → リポジトリダウンロード の順で進めます。
 
-```bash
-# このリポジトリをfork（GitHub上で「Fork」ボタン）
-# forkしたリポジトリをローカルにclone
-git clone https://github.com/{あなたのユーザー名}/ebook-autowriter-codex.git
-cd ebook-autowriter-codex
-```
-
-### Step 3: Codex Cloud にリポジトリを接続
-
-1. OpenAI の **Codex** 画面を開く
-2. 「Connect repository」をクリック
-3. GitHub アカウントを連携
-4. `ebook-autowriter-codex` リポジトリを選択
-5. 接続完了後、Codex のチャット画面にリポジトリ名が表示される
-
-### Step 4: ローカル環境の準備
+### Step 3: ローカル環境の準備
 
 ```bash
 # pandoc のインストール
@@ -220,7 +204,7 @@ python scripts/clean_invisible.py output/{slug}/
 
 ### Codex が途中で止まる
 
-**対処:** Codex のチャット画面で「続けて」と入力すると、中断地点から再開します。★チェックポイントで止まっている場合は「OK」で進行します。
+**対処:** コマンドプロンプトで「続けて」と入力しEnterを押すと、中断地点から再開します。★チェックポイントで止まっている場合は「OK」で進行します。
 
 ---
 
