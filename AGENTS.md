@@ -1358,6 +1358,34 @@ python scripts/validate_cover_prompt.py output/{slug}
 
 ## Phase 6: 表紙画像生成（ChatGPT Images 2.0 DevTools経由）
 
+### ★プリフライトチェック（Phase 6/7 開始の絶対条件）
+
+Phase 6・Phase 7 を開始する前に、以下の2つのチェックを必ず実行する。
+**両方PASSしない限り、画像生成フェーズを開始してはならない。**
+
+```
+Step 1: Chrome DevTools 接続確認
+  python scripts/phase6_preflight.py
+  → PASS: 次へ進む
+  → FAIL: Phase 6 を開始しない。ユーザーに以下を伝えて停止する:
+    「Chrome（ポート9224）が起動していません。
+     デスクトップの Chrome book creation を起動してから Codex を再起動してください。」
+
+Step 2: MCP ツール確認
+  mcp__chrome-devtools__list_pages() を実行する
+  → 成功: 次へ進む
+  → 「mcp__chrome-devtools__*が見つからない」エラー:
+    Phase 6 を開始しない。ユーザーに以下を伝えて停止する:
+    「DevTools MCP がこのセッションに登録されていません。
+     Codex を再起動してください（config.toml の chrome-devtools 設定が必要です）。」
+```
+
+**プリフライト失敗時に以下の代替手段を使うことは絶対禁止:**
+- imagegen skill / gpt-image-2 API / DALL-E
+- 直接CDP接続（raw WebSocket）
+- HTML/CSS/SVG描画 / Pillow/PILテキスト描画
+- 「別の方法で画像を作る」という判断自体が禁止
+
 **★確認3 で承認されたプロンプトで画像を生成する。**
 生成手順は後述「ChatGPT Images 2.0 生成プロトコル」に従う。
 
