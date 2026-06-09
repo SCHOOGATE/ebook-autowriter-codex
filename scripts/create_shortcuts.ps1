@@ -20,16 +20,18 @@ $sc2.IconLocation = "shell32.dll,3"
 $sc2.Save()
 Write-Host "BookRestore shortcut created"
 
-# Chrome (book creation) - DevTools debug mode port 9224
+# Chrome (book creation) - DevTools debug mode (default port 9222)
 $chromePath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
 if (Test-Path $chromePath) {
-    $sc3 = $ws.CreateShortcut("$desktop\Chrome（書籍制作用）.lnk")
+    $port = if ($env:CDTP_PORT) { $env:CDTP_PORT } else { "9222" }
+    $profileDir = "C:\Users\$userName\chrome-profiles\profile-$port"
+    $sc3 = $ws.CreateShortcut("$desktop\Chrome book creation.lnk")
     $sc3.TargetPath = $chromePath
-    $sc3.Arguments = "--remote-debugging-port=9224 --user-data-dir=`"C:\Users\$userName\chrome-profiles\profile-9224`" https://chatgpt.com"
+    $sc3.Arguments = "--remote-debugging-port=$port --remote-allow-origins=* --user-data-dir=`"$profileDir`" https://chatgpt.com"
     $sc3.WorkingDirectory = "C:\Program Files\Google\Chrome\Application"
-    $sc3.Description = "Codex CLI Chrome DevTools port 9224"
+    $sc3.Description = "Codex CLI Chrome DevTools port $port"
     $sc3.Save()
-    Write-Host "Chrome（書籍制作用）shortcut created (user: $userName)"
+    Write-Host "Chrome book creation shortcut created (port: $port, user: $userName)"
 } else {
     Write-Host "WARNING: Chrome not found at $chromePath. Skipping Chrome shortcut."
 }
