@@ -1,0 +1,65 @@
+# A+コンテンツ画像プロンプト: 初心者のための英検合格入門
+
+作成日: 2026-06-09
+生成モデル: ChatGPT Images 2.0 via Chrome DevTools
+出力仕様: PNG / 970x600 / output/eigo-kentei/images/
+
+---
+
+## aplus_1.png: 問題提起
+
+subject: |
+  Create a 970x600 Amazon A+ content banner for a Japanese Kindle study guide. Theme: Eiken learners feel lost because they do not know what to study first. Show a clean study desk with several books, a notebook, a calendar, and a confused but not exaggerated learning atmosphere. Include large Japanese headline text: "英検対策、何から始める？"
+layout: |
+  Horizontal banner, 970x600. Left side: readable headline and short subtext. Right side: desk scene with study materials, checklist, and calendar. Keep wide margins so Japanese text is not cropped. No official Eiken logo or trademark-style badge.
+typography: |
+  Japanese headline must be bold and highly readable. Subtext: "単語・長文・作文・面接をバラバラにしない" in smaller clear type. Do not add extra words.
+visuals: |
+  Use visual cues of confusion and too many choices: open books, sticky notes, a calendar with a test date circled, and a pencil. Avoid sad faces, school mascot style, or cluttered text.
+style: |
+  Professional educational Kindle A+ image. Clean white, navy, green, and warm yellow accents. Bright, trustworthy, modern study-guide design.
+
+---
+
+## aplus_2.png: 煽り・共感
+
+subject: |
+  Create a 970x600 Amazon A+ content banner showing the common failure pattern: studying hard but scores do not improve. Japanese Kindle study guide context. Include headline text: "努力しているのに伸びない理由"
+layout: |
+  Horizontal banner. Center: simple score report style card with four skill labels represented by icons: reading, listening, writing, speaking. Around it, subtle arrows showing misaligned study effort. Keep the image clean and not data-heavy.
+typography: |
+  Headline: "努力しているのに伸びない理由". Subtext: "原因は努力不足ではなく、順番のズレかもしれません". Text must be crisp, large, and readable.
+visuals: |
+  Use icons for four skills, a notebook with short check marks, and a gentle warning color accent. Do not use real exam logos, real score screenshots, or official certificate imagery.
+style: |
+  Empathetic but calm. Avoid fear-based dark design. Use navy and green with a small yellow warning accent. Premium educational infographic feel.
+
+---
+
+## aplus_3.png: 解決策
+
+subject: |
+  Create a 970x600 Amazon A+ content banner presenting the solution: connect the four skills into one roadmap. Japanese Kindle study guide for Eiken learners. Include headline text: "4技能をつなげる合格ロードマップ"
+layout: |
+  Horizontal banner. Use a clean path diagram from left to right with four stations: 単語, 長文, ライティング, 面接. Each station has a simple icon. Add a final goal flag labeled 合格. Keep all text readable and minimal.
+typography: |
+  Headline: "4技能をつなげる合格ロードマップ". Small subtext: "同じ教材を、読む・聞く・書く・話すへ展開する". No extra text.
+visuals: |
+  Roadmap line, study icons, goal flag, open notebook background. Avoid tables and tiny labels. Avoid official Eiken marks.
+style: |
+  Clear, structured, hopeful. Use white background, navy text, green route line, yellow goal accent. Modern Kindle A+ educational layout.
+
+---
+
+## aplus_4.png: CTA
+
+subject: |
+  Create a 970x600 Amazon A+ content banner encouraging action for a Japanese Kindle study guide. Theme: start with 15 minutes today and turn confusion into a concrete study plan. Include headline text: "今日の15分を合格への一歩に"
+layout: |
+  Horizontal banner. Left: headline and short subtext. Right: a simple weekly study planner with checkmarks, pencil, and a warm desk lamp. Make the scene practical and calm.
+typography: |
+  Headline: "今日の15分を合格への一歩に". Subtext: "受験級・残り日数・苦手技能から、次の行動を決める". Use clean bold Japanese typography.
+visuals: |
+  Weekly planner, checkmarks, pencil, study desk, subtle upward arrow. Do not include fake reviews, sales claims, price tags, official logos, or excessive promotional badges.
+style: |
+  Encouraging and practical. Premium study guide aesthetic. Palette: white, navy, fresh green, warm yellow. High contrast and readable at Amazon product page size.
