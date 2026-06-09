@@ -1,0 +1,43 @@
+model: ChatGPT Images 2.0
+output:
+  format: JPG
+  size: 1600x2560
+  destination: output/kinniku-tsu-taisaku/images/cover.jpg
+
+subject: |
+  Create a premium Japanese Kindle ebook cover for the book titled "ジム初心者のための筋肉痛対策入門" with the subtitle "翌日つらくならない運動後ケアの基本" and author name "DaiGo".
+  The subject is a calm, realistic beginner gym scene focused on recovery, not hardcore bodybuilding.
+  Show a clean gym corner with a beginner-friendly foam roller, water bottle, towel, light dumbbells, and a person gently stretching their legs after training.
+  The person should look relieved and composed, suggesting smart recovery and safe continuation rather than pain or exhaustion.
+
+layout: |
+  Vertical Kindle cover, 1600x2560.
+  Top 45% reserved for the large Japanese title.
+  Middle area includes the recovery-focused gym visual with enough negative space for readability.
+  Subtitle placed below the title in a smaller but clear block.
+  Author name "DaiGo" placed near the bottom, centered.
+  Avoid clutter, avoid tiny text, avoid medical diagrams, avoid aggressive bodybuilding poses.
+
+typography: |
+  Main title text must be exactly: ジム初心者のための筋肉痛対策入門
+  Subtitle text must be exactly: 翌日つらくならない運動後ケアの基本
+  Author text must be exactly: DaiGo
+  Use bold, highly legible Japanese typography with strong contrast.
+  Title should feel practical, trustworthy, and beginner-friendly.
+  Do not distort Japanese characters.
+  Do not add extra taglines or publisher logos.
+
+visuals: |
+  Realistic photographic or high-end editorial illustration style.
+  Color palette: clean white, deep charcoal, fresh green accents, and warm skin tones.
+  Include subtle signs of post-workout recovery: towel, water, foam roller, gentle leg stretch, soft gym lighting.
+  The cover should communicate "safe recovery", "beginner confidence", and "tomorrow will be easier".
+  No injury gore, no hospital setting, no crying expression, no exaggerated pain pose.
+
+style: |
+  Modern Japanese health and fitness book design.
+  Calm, practical, evidence-informed, and approachable.
+  Suitable for Kindle Direct Publishing.
+  High contrast at thumbnail size.
+  Professional commercial cover, not a poster, not a social media banner.
+  Final image should be polished, realistic, and readable as a small Amazon search result thumbnail.
