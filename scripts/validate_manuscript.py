@@ -147,9 +147,110 @@ def check_style_consistency(content):
     return desu_masu / total
 
 
+FILLER_PATTERN = re.compile(
+    r"(第\d章|はじめに|おわりに|第\d章:.+)の補足\d+では"
+)
+
+
+def check_template_filler(content):
+    """B-1: Detect template-style filler lines."""
+    lines = content.split("\n")
+    matched = [i + 1 for i, line in enumerate(lines) if FILLER_PATTERN.search(line)]
+    if matched:
+        return [f"template filler detected: {len(matched)} lines"]
+    return []
+
+
+def check_subsection_filler(content):
+    """B-2: Detect filler immediately after ### headings."""
+    lines = content.split("\n")
+    count = 0
+    i = 0
+    while i < len(lines):
+        if lines[i].startswith("### "):
+            # find next non-empty line
+            j = i + 1
+            while j < len(lines) and lines[j].strip() == "":
+                j += 1
+            if j < len(lines) and FILLER_PATTERN.search(lines[j]):
+                count += 1
+        i += 1
+    if count > 0:
+        return [f"subsection heading followed by filler: {count} occurrences"]
+    return []
+
+
+def check_chapter_chars_excluding_filler(chapters):
+    """B-3: Per-chapter character count after removing filler lines."""
+    chapter_min = {1: 3000, 2: 3500, 3: 5000, 4: 4000, 5: 2500}
+    errors = []
+    ch_num = 0
+    for title, body in chapters:
+        filtered_lines = [
+            line for line in body.split("\n")
+            if not FILLER_PATTERN.search(line)
+        ]
+        filtered_len = sum(len(line) for line in filtered_lines)
+        if "はじめに" in title or "おわりに" in title:
+            if filtered_len < 1200:
+                errors.append(
+                    f"「{title}」filler-excluded char count: {filtered_len} / min 1,200"
+                )
+        elif title.startswith("第") or re.match(r"\d+章", title):
+            ch_num += 1
+            min_len = chapter_min.get(ch_num, 3000)
+            if filtered_len < min_len:
+                errors.append(
+                    f"「{title}」filler-excluded char count: {filtered_len} / min {min_len}"
+                )
+    return errors
+
+
+def check_research_citations(slug_dir, content):
+    """B-4: Warn if no research.md URLs or domains are cited in manuscript."""
+    research_path = os.path.join(slug_dir, "research.md")
+    if not os.path.isfile(research_path):
+        return []  # no research.md, skip
+    with open(research_path, encoding="utf-8") as f:
+        research = f.read()
+    urls = re.findall(r"(https?://\S+)", research)
+    if not urls:
+        return []
+    # extract domains
+    domains = set()
+    for url in urls:
+        m = re.match(r"https?://([^/]+)", url)
+        if m:
+            domains.add(m.group(1))
+    # check if any url or domain appears in manuscript
+    for url in urls:
+        if url in content:
+            return []
+    for domain in domains:
+        if domain in content:
+            return []
+    return [f"WARN: research.md has {len(urls)} URLs but none cited in manuscript"]
+
+
+def check_duplicate_sentences(content):
+    """B-5: Detect sentences (>=15 chars) appearing 3+ times."""
+    sentences = [s.strip() for s in content.split("。") if len(s.strip()) >= 15]
+    normalized = [re.sub(r"\s+", "", s) for s in sentences]
+    counter = Counter(normalized)
+    duplicates = {sent: cnt for sent, cnt in counter.items() if cnt >= 3}
+    if duplicates:
+        issues = []
+        for sent, cnt in list(duplicates.items())[:5]:
+            preview = sent[:40]
+            issues.append(f"duplicate sentence ({cnt}x): \"{preview}...\"")
+        return issues
+    return []
+
+
 def validate(slug_dir):
     path = os.path.join(slug_dir, "manuscript.md")
     errors = []
+    warnings = []
 
     if not os.path.exists(path):
         print("FAIL: manuscript.md が存在しません")
@@ -193,11 +294,32 @@ def validate(slug_dir):
     if style_ratio < 0.80:
         errors.append(f"です・ます調の一貫性不足: {style_ratio:.0%} / 最低80%")
 
+    # B-1: Template filler detection
+    errors.extend(check_template_filler(content))
+
+    # B-2: Subsection heading followed by filler
+    errors.extend(check_subsection_filler(content))
+
+    # B-3: Chapter char count excluding filler lines
+    errors.extend(check_chapter_chars_excluding_filler(chapters))
+
+    # B-4: Research citation check (WARN only, not FAIL)
+    warnings.extend(check_research_citations(slug_dir, content))
+
+    # B-5: Duplicate sentence detection (3+ identical, >=15 chars)
+    errors.extend(check_duplicate_sentences(content))
+
     if errors:
         print("FAIL: manuscript.md 検証エラー")
         for e in errors:
             print(f"  - {e}")
+        for w in warnings:
+            print(f"  - {w}")
         return 1
+
+    if warnings:
+        for w in warnings:
+            print(f"  - {w}")
 
     print(f"PASS: manuscript.md ({total_chars}字, {len(chapters)}セクション, 重複率{dup_ratio:.1%})")
     return 0

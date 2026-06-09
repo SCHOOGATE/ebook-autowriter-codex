@@ -20,14 +20,14 @@ $sc2.IconLocation = "shell32.dll,3"
 $sc2.Save()
 Write-Host "BookRestore shortcut created"
 
-# Chrome（書籍制作用）— DevToolsデバッグモード ポート9222
+# Chrome (book creation) - DevTools debug mode port 9224
 $chromePath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
 if (Test-Path $chromePath) {
     $sc3 = $ws.CreateShortcut("$desktop\Chrome（書籍制作用）.lnk")
     $sc3.TargetPath = $chromePath
-    $sc3.Arguments = "--remote-debugging-port=9222 --user-data-dir=`"C:\Users\$userName\ChromeDebug`" https://chatgpt.com"
+    $sc3.Arguments = "--remote-debugging-port=9224 --user-data-dir=`"C:\Users\$userName\chrome-profiles\profile-9224`" https://chatgpt.com"
     $sc3.WorkingDirectory = "C:\Program Files\Google\Chrome\Application"
-    $sc3.Description = "Codex CLI用 Chrome（DevToolsデバッグモード ポート9222）"
+    $sc3.Description = "Codex CLI Chrome DevTools port 9224"
     $sc3.Save()
     Write-Host "Chrome（書籍制作用）shortcut created (user: $userName)"
 } else {

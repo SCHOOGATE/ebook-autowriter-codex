@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""統合検証スクリプト: 全Phase検証を順次実行し、completion_report.json を出力
+"""Integrated validator: runs all phase validators and outputs completion_report.json.
 
-画像はBase64エンコード後に元ファイルが削除されるため、
-images検証はbinaries/manifest.jsonの存在と.b64ファイルの整合性で判定する。
+Image validation checks for the images/ directory with required files:
+cover.jpg and aplus_1.png through aplus_4.png.
 """
 import sys
 import os
@@ -30,51 +30,36 @@ def load_validator(script_name):
     return mod
 
 
-def validate_binaries(slug_dir):
-    """Base64エンコード済み画像の検証（manifest.json + .b64ファイルの存在確認）"""
-    binaries_dir = os.path.join(slug_dir, 'binaries')
-    manifest_path = os.path.join(binaries_dir, 'manifest.json')
+def validate_images(slug_dir):
+    """Validate that images/ directory contains required image files."""
+    images_dir = os.path.join(slug_dir, 'images')
 
-    if not os.path.isfile(manifest_path):
-        print("FAIL: binaries/manifest.json が存在しません")
+    if not os.path.isdir(images_dir):
+        print("FAIL: images/ directory does not exist")
         return 1
 
-    with open(manifest_path, 'r', encoding='utf-8') as f:
-        manifest = json.load(f)
-
-    if not manifest:
-        print("FAIL: manifest.json が空です")
-        return 1
-
-    # 必須ファイルチェック
-    required = {'images/cover.jpg', 'images/cover.png'}
-    found_paths = {e['relative_path'] for e in manifest}
-    has_cover = bool(required & found_paths)
-    if not has_cover:
-        print("FAIL: 表紙画像(cover.jpg/png)がmanifestに含まれていません")
-        return 1
-
-    aplus_count = sum(1 for p in found_paths if 'aplus_' in p)
-    if aplus_count < 4:
-        print(f"FAIL: A+画像が不足しています: {aplus_count}/4")
-        return 1
-
-    # .b64ファイルの存在確認
     errors = []
-    for entry in manifest:
-        rel_path = entry['relative_path']
-        flat_name = rel_path.replace('/', '_') + '.b64'
-        b64_path = os.path.join(binaries_dir, flat_name)
-        if not os.path.isfile(b64_path):
-            errors.append(f"  - {flat_name} が見つかりません")
+
+    # Check cover.jpg
+    cover_path = os.path.join(images_dir, 'cover.jpg')
+    if not os.path.isfile(cover_path):
+        errors.append("cover.jpg is missing")
+
+    # Check aplus_1.png through aplus_4.png
+    for i in range(1, 5):
+        aplus_path = os.path.join(images_dir, f'aplus_{i}.png')
+        if not os.path.isfile(aplus_path):
+            errors.append(f"aplus_{i}.png is missing")
 
     if errors:
-        print("FAIL: Base64ファイルが不足しています")
+        print("FAIL: images/ validation errors")
         for e in errors:
-            print(e)
+            print(f"  - {e}")
         return 1
 
-    print(f"PASS: binaries ({len(manifest)}ファイル, manifest.json整合OK)")
+    # Count total files for reporting
+    total_files = len([f for f in os.listdir(images_dir) if os.path.isfile(os.path.join(images_dir, f))])
+    print(f"PASS: images/ ({total_files} files, cover.jpg + aplus_1-4.png present)")
     return 0
 
 
@@ -101,10 +86,10 @@ def validate_all(slug_dir):
             results[name] = f"ERROR: {str(e)}"
             all_pass = False
 
-    # Base64画像の検証（元画像は削除済みのためmanifest+.b64で検証）
-    print(f"\n--- binaries (Base64画像検証) ---")
-    ret = validate_binaries(slug_dir)
-    results["binaries"] = "PASS" if ret == 0 else "FAIL"
+    # Image file validation (cover.jpg + aplus_1-4.png)
+    print(f"\n--- images (image file validation) ---")
+    ret = validate_images(slug_dir)
+    results["images"] = "PASS" if ret == 0 else "FAIL"
     if ret != 0:
         all_pass = False
 
