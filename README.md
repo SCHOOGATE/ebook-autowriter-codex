@@ -30,7 +30,7 @@ OpenAI Codex Cloud で **Kindle電子書籍（25,000字・5章構成）** を対
 
 | 項目 | 詳細 |
 |------|------|
-| **OpenAI** | Plus プラン以上（$20/月〜。Codex Cloud 利用に必要） |
+| **OpenAI** | Plus プラン以上（$20/月〜。Codex Cloud 利用に必要）。**モデルは GPT-5.5 を選択してください** |
 | **GitHub** | アカウント作成済み（リポジトリ接続に必要） |
 | **Python** | 3.8 以上 |
 | **pandoc** | DOCX変換に使用（ローカル後処理） |
@@ -83,8 +83,9 @@ pip install python-docx Pillow
 
 ### Codex での対話フロー
 
-1. Codex のチャット画面で **「{テーマ}の電子書籍を制作」** と入力（例: 「AI副業の電子書籍を制作」）
-2. 著者名・参考資料（任意）を回答
+1. Codex のチャット画面で **モデルを GPT-5.5 に変更**（入力欄下のモデル名をクリック → GPT-5.5 を選択）
+2. **「{テーマ}の電子書籍を制作」** と入力（例: 「AI副業の電子書籍を制作」）
+3. 著者名・参考資料（任意）を回答
 3. 以下の7つのチェックポイント（★）で確認を求められます
 
 ```
@@ -148,7 +149,7 @@ python scripts/validate_all.py output/{slug}/
 ```
 ebook-autowriter-codex/
 ├── README.md                   ← このファイル
-├── AGENTS.md                   ← Codex指示書（v3.1）
+├── AGENTS.md                   ← Codex指示書（v4.5）
 ├── scripts/
 │   ├── validate_all.py         ← 統合検証（全Phase一括）
 │   ├── validate_research.py    ← リサーチ検証（URL15件・3,000字）
