@@ -39,25 +39,62 @@ def get_image_dimensions(path):
     return None, None
 
 
-def validate_cover(slug_dir):
-    """Cover image validation with size and resolution check."""
-    path = os.path.join(slug_dir, "images", "cover.jpg")
-    if not os.path.exists(path):
-        path = os.path.join(slug_dir, "images", "cover.png")
-        if not os.path.exists(path):
-            return "cover.jpg/png が存在しません"
-
+def _check_cover_file(path, label="cover"):
+    """Validate a single cover image file. Returns error string or None."""
     size = os.path.getsize(path)
     if size < MIN_COVER_SIZE:
-        return f"cover画像のサイズが小さすぎます: {size:,}B / 最低{MIN_COVER_SIZE:,}B（ダミー画像の可能性）"
+        return f"{label}画像のサイズが小さすぎます: {size:,}B / 最低{MIN_COVER_SIZE:,}B（ダミー画像の可能性）"
 
     w, h = get_image_dimensions(path)
     if w and h:
-        print(f"  cover resolution: {w}x{h}")
+        print(f"  {label} resolution: {w}x{h}")
         if w < 1000 or h < 1500:
-            return f"cover解像度が低すぎます: {w}x{h} / 推奨1600x2560以上"
+            return f"{label}解像度が低すぎます: {w}x{h} / 推奨1600x2560以上"
 
     return None
+
+
+def validate_cover(slug_dir):
+    """Cover image validation. Supports both single (cover.jpg) and 3-pattern (cover_a/b/c.jpg)."""
+    images_dir = os.path.join(slug_dir, "images")
+
+    # v4.7: Check for 3-pattern files first
+    pattern_files = {
+        "cover_a": None,
+        "cover_b": None,
+        "cover_c": None,
+    }
+    for name in pattern_files:
+        for ext in (".jpg", ".png"):
+            p = os.path.join(images_dir, name + ext)
+            if os.path.exists(p):
+                pattern_files[name] = p
+                break
+
+    has_patterns = any(v is not None for v in pattern_files.values())
+
+    if has_patterns:
+        # 3-pattern mode: validate all that exist
+        errors = []
+        for name, path in pattern_files.items():
+            if path is None:
+                errors.append(f"{name}.jpg/png が存在しません")
+                continue
+            err = _check_cover_file(path, name)
+            if err:
+                errors.append(err)
+        if errors:
+            return "; ".join(errors)
+        return None
+
+    # Legacy single file mode
+    path = os.path.join(images_dir, "cover.jpg")
+    if not os.path.exists(path):
+        path = os.path.join(images_dir, "cover.png")
+        if not os.path.exists(path):
+            return "cover.jpg/png が存在しません"
+
+    return _check_cover_file(path, "cover")
 
 
 def validate_aplus(slug_dir):
