@@ -1,0 +1,93 @@
+# A+コンテンツ画像プロンプト: 初心者のための皮下脂肪の落とし方
+
+作成日: 2026-06-10
+出力仕様: 970x600px PNG / ChatGPT Images 2.0 / GPT-Image-2.0
+共通ルール: 日本語文字は大きく鮮明。余計な英語、擬似文字、ロゴ、ISBN、価格、医療効果の断定表現は禁止。Amazon商品ページで横長表示されたときに、キャッチコピーが一目で読める構図にする。
+
+---
+
+## aplus_1.png: 問題提起
+Subject:
+  Create a premium Amazon A+ content banner for a Japanese Kindle health/diet book.
+  Theme: the frustration of losing weight but still seeing stubborn subcutaneous fat around the lower belly, arms, and thighs.
+  Use only this Japanese headline:
+  「体重は減ったのに、下腹だけ残る」
+  Small supporting text:
+  「原因は努力不足ではなく、順番の間違いかもしれません」
+
+Layout:
+  970x600px horizontal banner.
+  Left 45%: emotional but tasteful scene of a person standing near a bathroom mirror, shown abstractly from shoulder to waist, looking at a soft lower-belly silhouette. No exposed skin, no sexualized body, no before-after comparison.
+  Right 55%: deep teal panel with large white headline and smaller warm-white supporting text.
+  Keep text large, sharp, and readable at Amazon product-page scale.
+
+Visuals:
+  Palette: deep teal #0F4C5C, warm off-white #F7F3EA, coral accent #E85D45, charcoal #273238.
+  Style: premium Japanese wellness editorial design, cinematic soft morning light, subtle paper texture, clean layout.
+  Avoid shame-heavy imagery, medical diagrams, scales as the main subject, fake app UI, pseudo Japanese text.
+
+---
+
+## aplus_2.png: 煽り・共感
+Subject:
+  Create a premium Amazon A+ content banner showing common diet mistakes that keep subcutaneous fat from changing.
+  Use only this Japanese headline:
+  「腹筋だけ、糖質ゼロ、短期勝負。」
+  Small supporting text:
+  「その頑張りが、見た目の変化を遠ざけていることがあります」
+
+Layout:
+  970x600px horizontal banner.
+  Center: three elegant icon-like panels, not cards inside cards: abdominal crunch icon, empty rice bowl with a prohibition line, calendar marked “2週間” crossed out subtly.
+  Top area: large headline in charcoal on warm off-white.
+  Bottom strip: coral background with supporting text in white.
+  Make the design feel like a serious bestselling health book, not a social media warning post.
+
+Visuals:
+  Palette: warm off-white #F7F3EA, charcoal #273238, muted teal #0F4C5C, coral #E85D45.
+  Style: clean vector-like illustration, premium editorial, high contrast typography, subtle shadows.
+  Avoid fearmongering, distorted bodies, extreme thinness, fake Japanese, tiny labels.
+
+---
+
+## aplus_3.png: 解決策
+Subject:
+  Create a premium Amazon A+ content banner explaining the book's solution: an 8-week sequence combining meal structure, walking, strength training, sleep, and records.
+  Use only this Japanese headline:
+  「8週間で、落ちる順番に整える」
+  Small supporting text:
+  「食事の型・歩数・筋トレ・睡眠・記録を一本の線に」
+
+Layout:
+  970x600px horizontal banner.
+  Use a left-to-right flow with five large clean symbols: meal plate with egg/fish, walking shoes, squat silhouette, moon/sleep icon, weekly record notebook.
+  Headline across top in deep teal, supporting text below or in a coral accent band.
+  Keep hierarchy strong: headline first, five-step flow second.
+
+Visuals:
+  Palette: deep teal #0F4C5C, warm off-white #F7F3EA, fresh green #6BA368, coral #E85D45, charcoal #273238.
+  Style: high-end Japanese practical guide, clean infographic-like editorial illustration, no clutter, no small unreadable text.
+  Avoid medical claims, weight-loss guarantees, pseudo charts, fake numbers except “8週間” in the headline.
+
+---
+
+## aplus_4.png: CTA
+Subject:
+  Create a premium Amazon A+ closing banner for a Japanese Kindle health/diet book, encouraging the viewer to start with one small action today.
+  Use only this Japanese headline:
+  「今日の一食と10分から始める」
+  Small supporting text:
+  「きつい糖質制限なしで、見た目を変える8週間プログラム」
+  Include the book title in smaller text:
+  「初心者のための皮下脂肪の落とし方」
+
+Layout:
+  970x600px horizontal banner.
+  Background: deep teal with warm off-white central area.
+  Main visual: beautiful flat-lay of walking shoes, measuring tape, simple healthy meal plate, and a small weekly checklist with blank lines only.
+  Headline large and centered. Supporting text below. Book title at bottom, smaller but readable.
+
+Visuals:
+  Palette: deep teal #0F4C5C, coral #E85D45, warm off-white #F7F3EA, clean white #FFFFFF, charcoal #273238.
+  Style: polished Amazon Japan A+ content, premium wellness editorial, optimistic, practical, beginner-friendly.
+  Avoid fake UI, extra labels, unreadable checklist text, before-after bodies, logos, watermarks.
