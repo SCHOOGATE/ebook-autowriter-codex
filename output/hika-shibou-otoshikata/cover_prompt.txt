@@ -29,5 +29,6 @@ Visuals:
 Style:
   Commercial Amazon Japan bestseller quality.
   Looks like a professional Kindle diet book for beginners, not a social media ad or clinic flyer.
-  Use ChatGPT Images 2.0 / 4o image generation.
+  Use ChatGPT Images 2.0 / GPT-Image-2.0 image generation in ChatGPT.
+  If a Thinking or Pro model is available in ChatGPT, use it to plan and refine the image before generation.
   Output should be suitable for final resizing to 1600x2560 cover.jpg.
