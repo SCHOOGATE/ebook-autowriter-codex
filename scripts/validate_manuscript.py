@@ -204,6 +204,124 @@ def check_subsection_filler(content):
     return []
 
 
+def check_section_title_in_body(content):
+    """B-10: Detect section titles repeated verbatim in body text (generic filler).
+
+    If a ### heading's text appears 3+ times in body lines (not as heading),
+    the model is inserting the title into template filler sentences.
+    """
+    issues = []
+    sections = re.split(r"(?=^### )", content, flags=re.MULTILINE)
+    for sec in sections:
+        lines = sec.strip().split("\n")
+        if not lines or not lines[0].startswith("### "):
+            continue
+        # Extract title text (without ### and numbering like "1.1 ")
+        raw_title = lines[0].lstrip("#").strip()
+        # Also get just the descriptive part (after "1.1 " etc.)
+        title_text = re.sub(r"^\d+\.\d+\s+", "", raw_title)
+        if len(title_text) < 4:
+            continue
+        # Count occurrences in body (non-heading lines)
+        body_count = 0
+        for line in lines[1:]:
+            stripped = line.strip()
+            if stripped.startswith("#"):
+                continue
+            if raw_title in stripped:
+                body_count += 1
+        if body_count >= 3:
+            issues.append(
+                f"section title in body: 「{raw_title[:30]}」 appears "
+                f"{body_count} times in its own section body (max 2)"
+            )
+    return issues
+
+
+def check_repeated_tail_template(content):
+    """B-11: Detect identical sentence endings reused across multiple sections.
+
+    If the same sentence suffix (last 20+ chars) appears in 5+ different
+    sections, it's a template filler with only the section title swapped.
+    """
+    issues = []
+    sections = re.split(r"(?=^### )", content, flags=re.MULTILINE)
+    # Collect last-20-char suffixes of all body sentences per section
+    suffix_to_sections = {}
+    for sec in sections:
+        lines = sec.strip().split("\n")
+        if not lines or not lines[0].startswith("### "):
+            continue
+        sec_title = lines[0].lstrip("#").strip()[:30]
+        for line in lines[1:]:
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#") or stripped == "\\newpage":
+                continue
+            # Normalize: remove section title references to find shared template
+            # Take the last 20 chars as the "tail signature"
+            if len(stripped) >= 25:
+                tail = stripped[-25:]
+                if tail not in suffix_to_sections:
+                    suffix_to_sections[tail] = set()
+                suffix_to_sections[tail].add(sec_title)
+
+    for tail, secs in suffix_to_sections.items():
+        if len(secs) >= 5:
+            issues.append(
+                f"repeated tail template across {len(secs)} sections: "
+                f"\"...{tail}\" — likely filler with only title swapped"
+            )
+            break  # Report one example, not all
+
+    return issues
+
+
+def check_identical_line_structure(content):
+    """B-12: Detect lines that differ only in the section-title portion.
+
+    Strips all ### titles from lines, then checks if the remaining
+    'action template' portion is repeated 5+ times across the document.
+    This catches any pattern where only the noun changes.
+    """
+    issues = []
+    # Collect all ### section titles for stripping
+    all_titles = re.findall(r"^### (.+)$", content, re.MULTILINE)
+    title_texts = set()
+    for t in all_titles:
+        title_texts.add(t.strip())
+        # Also add without numbering
+        stripped = re.sub(r"^\d+\.\d+\s+", "", t.strip())
+        if stripped:
+            title_texts.add(stripped)
+
+    # For each body line, replace any title text with a placeholder
+    lines = content.split("\n")
+    template_counter = Counter()
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or stripped == "\\newpage":
+            continue
+        if len(stripped) < 20:
+            continue
+        normalized = stripped
+        for title in sorted(title_texts, key=len, reverse=True):
+            if title in normalized:
+                normalized = normalized.replace(title, "@@TITLE@@")
+        if "@@TITLE@@" in normalized:
+            template_counter[normalized] += 1
+
+    # Find templates used 5+ times
+    for template, count in template_counter.most_common(10):
+        if count >= 5:
+            preview = template[:60]
+            issues.append(
+                f"identical line structure ({count}x): \"{preview}...\" "
+                f"— same sentence with only section title swapped"
+            )
+
+    return issues
+
+
 def check_filler_excluded_total(content):
     """B-6: Total char count after removing all filler lines must meet 25,000.
 
@@ -383,6 +501,15 @@ def validate(slug_dir):
 
     # B-6: Filler-excluded total char count
     errors.extend(check_filler_excluded_total(content))
+
+    # B-10: Section title repeated in body text (generic filler detection)
+    errors.extend(check_section_title_in_body(content))
+
+    # B-11: Same sentence tail reused across 5+ sections
+    errors.extend(check_repeated_tail_template(content))
+
+    # B-12: Lines differing only in section-title portion
+    errors.extend(check_identical_line_structure(content))
 
     # B-7: Excessive blank lines
     errors.extend(check_excessive_blank_lines(content))
