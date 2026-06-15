@@ -5,6 +5,28 @@ eBook AutoWriter for Codex の AGENTS.md（スキル定義）の変更履歴。
 
 ---
 
+## v4.7.1 (2026-06-15) — ドキュメント: PowerShellエラー対策 + cmd/PS両対応
+
+**目的:** メンバーがWindows Terminal（デフォルトPowerShell）で手順書のコマンドを実行すると、(1) `%USERPROFILE%` が展開されずパスエラー (2) npm.ps1のExecutionPolicy制限でインストール不可、の2種類のエラーが発生。手順書3ファイルに対策を追加。
+
+### 変更一覧
+
+| # | 変更内容 | 変更理由 |
+|---|---------|---------|
+| 1 | 全ドキュメント冒頭に「コマンドプロンプト必須」注意書き追加 | PowerShellではnpm.ps1がExecutionPolicyで実行拒否される |
+| 2 | `%USERPROFILE%` 使用箇所にPowerShell版（`$env:USERPROFILE`）を併記 | Windows TerminalデフォルトがPowerShellのため、コピペでエラーになる |
+| 3 | トラブルシューティングにPowerShell関連エラー2件追加 | 「スクリプトの実行が無効」「パスが存在しない」の対処法を明記 |
+
+### 対象ファイル
+
+- `docs/setup-guide-codex-cli.md`（メンバー配布用・最新版）
+- `docs/setup-guide.md`（メンバー配布用・旧版）
+- `docs/usage-guide.md`（メンバー配布用）
+
+**コミット:** (本コミット)
+
+---
+
 ## v4.7 (2026-06-10) — 汎用フィラー検出 + chapter_blueprint UTF-8強制 + 表紙3パターン比較生成
 
 **目的:** hika-shibou-otoshikata テストで chapter_blueprint.md が文字化け（cp932書き込み）し、設計書を参照できないまま執筆に進行。結果として全23節に「節タイトル＋汎用アクション12行テンプレート」が挿入され、フィラー比率65.8%（実質本文7,948字/フィラー15,298字）の原稿が生成された。validate_manuscript.py の旧フィラー検出はパターンのハードコードに依存しており、新パターンを素通りさせていた。加えて、表紙プロンプトを3パターン比較生成に拡張し、品質の最大化を図る。
