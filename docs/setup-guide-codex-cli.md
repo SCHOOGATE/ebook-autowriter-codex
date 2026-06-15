@@ -272,16 +272,28 @@ powershell -ExecutionPolicy Bypass -File scripts\create_shortcuts.ps1
 
 2. まず、ファイルを保存するフォルダを作ります。以下を入力して Enter:
 
+**コマンドプロンプト（cmd）の場合:**
 ```
 mkdir %USERPROFILE%\repos
+```
+
+**PowerShell / Windows Terminal の場合:**
+```
+mkdir $env:USERPROFILE\repos
 ```
 
 （「既に存在します」というエラーが出ても問題ありません。そのまま次に進んでください）
 
 3. 次に、そのフォルダに移動します:
 
+**コマンドプロンプト（cmd）の場合:**
 ```
 cd %USERPROFILE%\repos
+```
+
+**PowerShell / Windows Terminal の場合:**
+```
+cd $env:USERPROFILE\repos
 ```
 
 4. ファイルをダウンロードします:
@@ -344,8 +356,14 @@ codex mcp add chrome-devtools -- npx -y chrome-devtools-mcp@latest
 
 1. コマンドプロンプトで以下を入力して Enter:
 
+**コマンドプロンプト（cmd）の場合:**
 ```
 cd %USERPROFILE%\repos\ebook-autowriter-codex
+```
+
+**PowerShell / Windows Terminal の場合:**
+```
+cd $env:USERPROFILE\repos\ebook-autowriter-codex
 ```
 
 2. 続けて以下を入力して Enter:
@@ -416,3 +434,68 @@ powershell -ExecutionPolicy Bypass -File scripts\create_shortcuts.ps1
 1. どの Step でエラーが出たか
 2. コマンドプロンプトに表示されたエラーメッセージ（画面のスクリーンショット）
 3. パソコンの Windows バージョン（「設定」→「システム」→「バージョン情報」で確認できます）
+
+---
+
+## WordPress連携設定（任意）
+
+**図解版**で制作した電子書籍を、自分のWordPressサイトに下書きとして自動保存できます。
+この設定は**任意**です。WordPressを使わない方はスキップしてください。
+
+### 前提
+
+- 自分のWordPressサイトがあること
+- WordPress管理画面にログインできること
+
+### Step 1: requestsのインストール
+
+コマンドプロンプトで以下を実行します:
+
+```
+pip install requests
+```
+
+### Step 2: Application Password の発行
+
+Application Password は、WordPressが外部ツールからのログインを許可するための専用パスワードです。
+通常のログインパスワードとは別物で、いつでも取り消しできます。
+
+1. WordPressの管理画面にログインします
+2. 左メニューの **「ユーザー」→「プロフィール」** をクリックします
+3. ページの一番下までスクロールします
+4. **「Application Passwords（アプリケーションパスワード）」** というセクションを見つけます
+5. 「新しいアプリケーションパスワード名」に **`ebook-autowriter`** と入力します
+6. **「新しいアプリケーションパスワードを追加」** ボタンをクリックします
+7. 画面に **スペース区切りの文字列**（例: `abcd 1234 efgh 5678 ijkl 9012`）が表示されます
+8. この文字列を **メモ帳にコピーして保存** してください（この画面を閉じると二度と表示されません）
+
+> **注意**: Application Passwords のセクションが表示されない場合は、WordPressのバージョンが古い可能性があります（5.6以降で対応）。WordPressを最新版にアップデートしてください。
+
+### Step 3: 初回実行時に自動セットアップ
+
+初めてWordPress投稿を実行すると、自動で設定を聞かれます:
+
+```
+1. WordPressサイトのURL（例: https://example.com）
+2. WordPress管理画面のユーザー名
+3. Step 2で発行したApplication Password
+```
+
+入力すると接続テストが行われ、成功したら設定が保存されます。
+**2回目以降はこの設定が自動で使われるため、再入力は不要です。**
+
+### 設定をやり直す場合
+
+コマンドプロンプトで以下を実行します:
+
+**コマンドプロンプト（cmd）の場合:**
+```
+cd %USERPROFILE%\repos\ebook-autowriter-codex
+python scripts/wp_publish.py output/test --setup
+```
+
+**PowerShell / Windows Terminal の場合:**
+```
+cd $env:USERPROFILE\repos\ebook-autowriter-codex
+python scripts/wp_publish.py output/test --setup
+```

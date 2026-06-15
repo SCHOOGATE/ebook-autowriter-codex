@@ -39,8 +39,14 @@ Step 5: 完成データを取得する
 3. 表示された **「コマンドプロンプト」** をクリックして開きます
 4. 黒い画面が表示されたら、以下の文字を **そのままコピーして貼り付け**、Enterキーを押します
 
+**コマンドプロンプト（cmd）の場合:**
 ```
 cd %USERPROFILE%\repos\ebook-autowriter-codex
+```
+
+**PowerShell / Windows Terminal の場合:**
+```
+cd $env:USERPROFILE\repos\ebook-autowriter-codex
 ```
 
 5. 続けて、以下を **そのままコピーして貼り付け**、Enterキーを押します（最新版に更新されます）
@@ -54,8 +60,14 @@ git pull
 6. 続けて、以下を **そのままコピーして貼り付け**、Enterキーを押します
 
 ```
-codex --dangerously-bypass-approvals-and-sandbox "AGENTS.mdの指示に従って「{テーマ}の電子書籍を制作」を開始してください。"
+codex --dangerously-bypass-approvals-and-sandbox "テキスト版で「{テーマ}の電子書籍を制作」を開始してください。"
 ```
+
+> **図解版（図解40〜60枚入り）** で制作したい場合は、「テキスト版」を「図解版」に変えてください:
+>
+> ```
+> codex --dangerously-bypass-approvals-and-sandbox "図解版で「{テーマ}の電子書籍を制作」を開始してください。"
+> ```
 
 7. **「Reading additional input from stdin...」** と表示されたら、準備完了です。AIが動き始めます
 

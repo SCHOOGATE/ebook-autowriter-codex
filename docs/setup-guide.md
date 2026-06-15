@@ -230,13 +230,25 @@ powershell -ExecutionPolicy Bypass -File scripts\create_shortcuts.ps1
 
 1. コマンドプロンプトを開きます（Windowsキー → cmd → コマンドプロンプト）
 2. まず、ファイルを保存するフォルダを作ります。以下を入力してEnter：
+
+   **コマンドプロンプト（cmd）の場合:**
    ```
    mkdir %USERPROFILE%\repos
    ```
+   **PowerShell / Windows Terminal の場合:**
+   ```
+   mkdir $env:USERPROFILE\repos
+   ```
    （「既に存在します」というエラーが出ても問題ありません。そのまま次に進んでください）
 3. 次に、そのフォルダに移動します：
+
+   **コマンドプロンプト（cmd）の場合:**
    ```
    cd %USERPROFILE%\repos
+   ```
+   **PowerShell / Windows Terminal の場合:**
+   ```
+   cd $env:USERPROFILE\repos
    ```
 4. ファイルをダウンロードします：
    ```
@@ -289,8 +301,13 @@ codex mcp add chrome-devtools -- npx -y chrome-devtools-mcp@latest
 
 1. Windowsキーを押す → `cmd` と入力 → 「コマンドプロンプト」をクリック
 2. 以下をそのままコピーして貼り付け、Enterキーを押します：
+   **コマンドプロンプト（cmd）の場合:**
    ```
    cd %USERPROFILE%\repos\ebook-autowriter-codex
+   ```
+   **PowerShell / Windows Terminal の場合:**
+   ```
+   cd $env:USERPROFILE\repos\ebook-autowriter-codex
    ```
 3. 続けて、以下を貼り付けてEnter（最新版に更新されます）：
    ```
